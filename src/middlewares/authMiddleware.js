@@ -18,4 +18,4 @@ const authToken = async (req, res, next) => {
     next()
 }
 
-exports.module = authToken 
+module.exports = authToken 
