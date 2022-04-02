@@ -11,4 +11,3 @@ router.get("/",async(req,res,)=>{
 router.get("/organizer/auditorium", [authToken, isOrganizer], organizerCtrl.findAuditorium)
 module.exports= router
 
-
