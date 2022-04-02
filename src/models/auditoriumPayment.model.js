@@ -1,5 +1,5 @@
 const mongooese = require("mongoose");
-const User = require("./user");
+const User = require("../models/user.model");
 const { ObjectId } = require("mongodb");
 
 const audiBookingPaymentSchema = new mongooese.Schema(
