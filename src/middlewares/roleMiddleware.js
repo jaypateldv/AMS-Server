@@ -1,7 +1,7 @@
 const isManagerSignUp = async (req, res, next) => {
     console.log("rolemidldeware.js => isManagerSignUp  check")
 
-    if (req.body.role = "manager") {
+    if (req.body.role == "manager") {
         const requireFields = ['name', 'email', 'auditoriumName', 'address', 'city', 'capacity', 'costPerHour']
 
         const manager = await Object.keys(req.body)
@@ -28,7 +28,7 @@ const isAdmin = async (req, res, next) => {
 
 const isOrganizer = async (req, res, next) => {
     console.log("rolemidldeware.js => isOrganizer() - role check  check")
-    if (req.user.role !== "organizer")
+    if (req.user.role !== "Event Organizer")
         return res.status(401).send({ error: "Unauthorized Perosn.." })
     next()
 }
