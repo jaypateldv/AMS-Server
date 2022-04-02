@@ -15,7 +15,7 @@ router.get('/manager/auditoriumEvents',[Authtoken, isManager],managercontroller.
 
 router.patch('/manager/update/auditoriumDetails',[Authtoken, isManager],managercontroller.updateAuditoriumdetails)
 
-router.delete()
+router.delete('/manager/delete/event',[Authtoken, isManager],managercontroller.deleteEvent)
 
 
 module.exports = router
