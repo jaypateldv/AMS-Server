@@ -1,6 +1,6 @@
 const isManagerSignUp = async (req, res, next) => {
     console.log("rolemidldeware.js => isManagerSignUp  check")
-    if (req.body.role = "manager") {
+    if (req.body.role == "manager") {
         const requireFields = ['name', 'email', 'auditoriumName', 'address', 'city', "capacity", 'costPerHour']
         const manager = await Object.keys(req.body)
         const isValidManager =await requireFields.every((field) => manager.includes(field))
