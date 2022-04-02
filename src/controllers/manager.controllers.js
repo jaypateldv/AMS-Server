@@ -12,6 +12,7 @@ const auditoriumDetails = async (req, res) => {
 const uploadAuditoriumimage = async (req, res) => {
     console.log('upload')
     try {
+        console.log("imae updal")
         const auditorium = await Auditorium.findOne({ manager_id: req.params.managerId })
         let uploadedImages = []
         for (let image of req.files) {

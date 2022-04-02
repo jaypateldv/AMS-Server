@@ -23,6 +23,7 @@ const image = multer({
 })
 router.post('/uploadAudiImages/:managerId',image.array('image'), managercontroller.uploadAuditoriumimage)
 
+
 router.get('/auditoriumEvents',[Authtoken, isManager],managercontroller.getAuditoriumdetails)
 
 router.patch('/update/auditoriumDetails',[Authtoken, isManager],managercontroller.updateAuditoriumdetails)

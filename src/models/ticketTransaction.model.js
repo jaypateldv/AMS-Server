@@ -22,13 +22,13 @@ const ticketTranactionSchema = new mongoose.Schema({
     },
 
     user_id: {
-        type: mongooese.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "User",
     },
 
     event_id: {
-        type: mongooese.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "AuditoriumBooking",
     },
@@ -45,3 +45,9 @@ const ticketTranactionSchema = new mongoose.Schema({
 }, {
     timestamps: true,
 })
+const ticketTransaction = mongoose.model(
+    "ticketTransaction",
+    ticketTranactionSchema
+);
+
+module.exports = ticketTransaction
