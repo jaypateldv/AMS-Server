@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
 const Auditorium = require('../models/auditorium.model')
 const AuditoriumBooking = require('../models/auditoriumBooking.model')
+const AudiBookingPayment = require('../models/auditoriumPayment.model')
 const { isValidBookingDate, getMergeTimeSlots, AvailableTime} = require('../utils/utils')
 const time = require('../models/allSlots.json')
-const audiBookingPayment = require('../models/auditoriumPayment.model')
 const { isValidEventUpdateDate } = require('../utils/utils')
 
 const findAuditorium = async (req,res) => {
@@ -111,7 +111,7 @@ const updateEventById = async (req,res) => {
     try {
         const eventId = req.params.eventId
         const updates = Object.keys(req.body)
-        const allowedUpdates = ["description", "event_name", "category", "ticket_price"]
+        const allowedUpdates = ["description", "event_name", "category"]
         const isValidUpdate = updates.every((update) => allowedUpdates.includes(update))
         const event = await AuditoriumBooking.findById(eventId)
         if (event.total_tickets != event.available_tickets)
@@ -137,12 +137,69 @@ const updateEventById = async (req,res) => {
     }
 }
 
+const auditoriumBookingPayment = async (req,res) => {
+    try {
+
+        const event_id = req.body.event_id
+        const amount = req.body.amount
+        const sender = req.user._id
+        const {status }= await AuditoriumBooking.findById(event_id)
+        console.log("status", status)
+        if (status == "True")
+            throw new Error("Payment already completed")
+        const session = await mongoose.startSession()
+        session.startTransaction()
+
+        try {
+
+            const { total_cost } = await AuditoriumBooking.findById(req.body.event_id)
+            const bookingConfirmation = new AudiBookingPayment({ user_id: sender, event_id, amount, status: "True" })
+            console.log("com", amount, total_cost)
+            console.log("1")
+            if (req.params.status == "True") {
+                console.log("2")
+                if (amount < total_cost || amount > total_cost)
+                    throw new Error(`User ${sender.name} you have enter wrong amount`)
+                else if (amount == total_cost) {
+                    await AuditoriumBooking.findByIdAndUpdate(event_id, { status: "True" })
+                    await bookingConfirmation.save()
+                    await session.commitTransaction()
+                    return res.json({ amount, status: bookingConfirmation.status })
+                }
+            } 
+            else {
+                console.log("falied payment")
+                await AuditoriumBooking.findByIdAndDelete(event_id)
+                const bookingConfirmation = new AudiBookingPayment({ user_id: sender, event_id, amount, status: "False" })
+                await bookingConfirmation.save()
+                await session.commitTransaction()
+                return res.json({ amount, status: bookingConfirmation.status, message: "Booking has been cancel" })
+            }
+        } catch (err) {
+
+            const bookingConfirmation = new AudiBookingPayment({ user_id: sender, event_id, amount, status: "False" })
+            await bookingConfirmation.save()
+            console.log("in abort :", err.message)
+            await session.abortTransaction()
+            return res.json({ amount, status: bookingConfirmation.status, error: err.message })
+
+        } finally {
+            session.endSession()
+        }
+
+    } catch (err) {
+        console.log("err", err.message)
+        return res.send({ error: err.message })
+    }
+}
+
 module.exports = {
     findAuditorium,
     getalltimeslots,
     bookAuditorium,
     allEvents,
     purchaseHistory,
-    updateEventById
+    updateEventById,
+    auditoriumBookingPayment
 }
     
