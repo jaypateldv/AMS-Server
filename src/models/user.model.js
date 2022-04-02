@@ -54,13 +54,7 @@ const userSchema = new mongooese.Schema(
             validate(v) {
                 if (v.toLowerCase().includes("password")) throw new Error("can't give 'password' in password")
             }
-        },
-        tokens: [{
-            token: {
-                type: String,
-                required: true
-            }
-        }]
+        }
     },
     {
         timestamps:true
@@ -96,10 +90,12 @@ userSchema.statics.findByCredentials = async (email, password) => {
 }
 //create method for generating auth token for user login
 userSchema.methods.generateAuthToken = async function () {
+    console.log("user.model => generateAuthToken()")
     const user = this
     const token = await jwt.sign({ _id: user._id.toString() }, 'thisismysecretforkwttoken')
-    user.tokens = user.tokens.concat({ token })
+    //user.tokens = user.tokens.concat({ token })
     //await user.save()
+    console.log("token",token)
     return token
 }
 

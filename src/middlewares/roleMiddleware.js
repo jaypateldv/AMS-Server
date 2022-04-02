@@ -3,7 +3,7 @@ const isManagerSignUp = async (req, res, next) => {
     if (req.body.role = "manager") {
         const requireFields = ['name', 'email', 'auditoriumName', 'address', 'city', "capacity", 'costPerHour']
         const manager = await Object.keys(req.body)
-        const isValidManager = await requireFields.every((field) = manager.includes(field))
+        const isValidManager =await requireFields.every((field) => manager.includes(field))
         if (!isValidManager)
             return res.status(400).send({ error: "Please fill all required fields" })
     }
