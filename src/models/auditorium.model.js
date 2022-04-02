@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const auditoriumSchema = new mongoose.Schema({
     auditoriumName: {
-        stype: String,
+        type: String,
         required: true,
         trime: true
     },
@@ -28,7 +28,7 @@ const auditoriumSchema = new mongoose.Schema({
         type: Number,
         //required:true
     },
-    "auditoriumDescription": {
+    auditoriumDescription: {
         type: String,
         required: true
     },
