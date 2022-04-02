@@ -13,7 +13,7 @@ const isManagerSignUp = async (req, res, next) => {
 }
 
 const isManager = async (req, res, next) => {
-    console.log("rolemidldeware.js => isManager() - role check  check")
+    console.log("rolemidldeware.js => isManager() - role check  check",req.user.role)
     if (req.user.role !== "manager")
         return res.status(401).send({ error: "Unauthorized Perosn.." })
     next()
