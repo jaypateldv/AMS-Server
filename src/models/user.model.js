@@ -24,7 +24,7 @@ const userSchema = new mongooese.Schema(
             }
         },
         contact: {
-            type: Number,
+            type: String,
             required:true,
             validate(v) {
                 if (v.minlength == 10) throw new Error('contact must be a 10 digits')
