@@ -11,6 +11,8 @@ router.get('/manager/auditoriumDetails', [Authtoken, isManager], managercontroll
 
 router.post('/manager/uploadAudiImages/:managerId', isManager, managercontroller.uploadAuditoriumimage)
 
+router.get('/manager/auditoriumEvents',[Authtoken, isManager],managercontroller.getAuditoriumdetails)
+
 
 module.exports = router
 

@@ -1,4 +1,5 @@
 const Auditorium = require('../models/auditorium.model')
+const AuditoriumBooking = require('../models/auditoriumBooking.model')
 // const sharp = require('sharp')
 
 const auditoriumDetails = async (req, res) => {
@@ -22,11 +23,25 @@ const uploadAuditoriumimage = async (req, res) => {
         const updatedManager = await auditorium.save()
         res.send(updatedManager)
     } catch (err) {
+
         res.send({ error: err.message })
+    }
+}
+
+const getAuditoriumdetails = async (req, res) => {
+    try {
+        console.log("manager : ", req.user._id, req.user.name)
+        const auditorium = await Auditorium.findOne({ manager_id: req.user._id });
+        const eventDetails = await AuditoriumBooking.find({ auditorium_id: auditorium._id })
+        res.send(eventDetails)
+    }
+    catch (err) {
+        res.status(400).send(err.message)
     }
 }
 
 module.exports = {
     auditoriumDetails,
-    uploadAuditoriumimage
+    uploadAuditoriumimage,
+    getAuditoriumdetails
 }
