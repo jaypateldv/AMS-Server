@@ -8,6 +8,9 @@ router.get("/",async(req,res,)=>{
     res.send("from organizer")
 })
 
-router.get("/organizer/auditorium", [authToken, isOrganizer], organizerCtrl.findAuditorium)
+router.get("/auditorium", [authToken, isOrganizer], organizerCtrl.findAuditorium)
+router.get("/getAvailableSlots", [authToken, isOrganizer], organizerCtrl.getalltimeslots)
+router.post("/bookAuditorium", [authToken, isOrganizer], organizerCtrl.bookAuditorium)
+
 module.exports= router
 
