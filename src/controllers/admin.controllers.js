@@ -1,5 +1,6 @@
 const User = require('../models/user.model')
 const Auditorium = require('../models/auditorium.model')
+const email = require("../email/account")
 
 
 const managerList = async (req, res) => {
@@ -16,7 +17,7 @@ const managerList = async (req, res) => {
             { $skip: skip }
         ])
         // res.status(200).send({ count: pendingList.length, pendingList })
-        res.status(200).send({managerList,count:managerList.length})
+        res.status(200).send({ managerList, count: managerList.length })
 
     } catch (err) {
         res.status(400).send(err.message)
@@ -28,9 +29,9 @@ const setManagerStatus = async (req, res) => {
         const Updatedmanager = await User.findByIdAndUpdate(req.body.managerId, { verificationStatus: req.body.verificationStatus }, { new: true, runValidators: true })
         if (Updatedmanager) {
             if (Updatedmanager.verificationStatus == "true")
-                a = 1
+                email.sendVerificationAcceptedMail(Updatedmanager.email, Updatedmanager.name)
             else
-                a = 1
+                email.sendVerificationRejectedMail(Updatedmanager.email, Updatedmanager.name)
 
             res.status(200).send(Updatedmanager)
         }
@@ -69,7 +70,7 @@ const removeUserById = async (req, res) => {
     }
 }
 
-const allUsers = async (req,res) => {
+const allUsers = async (req, res) => {
     try {
         const users = await User.find(req.query)
         res.status(200).send(users)
