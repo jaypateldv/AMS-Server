@@ -13,6 +13,7 @@ router.post("/ticketBooking",[authToken,isCustomer],customerController.ticketBoo
 router.post("/cancleTicket/:ticketId",[authToken,isCustomer],customerController.cancleTicket)
 router.get("/myEvents",[authToken,isCustomer],customerController.myEvents)
 router.post("/ticketBookingPayment/:status",[authToken,isCustomer],customerController.ticketBookingPayment)
+router.get("/myTransaction",[authToken,isCustomer],customerController.myTransaction)
 
 module.exports= router
 
