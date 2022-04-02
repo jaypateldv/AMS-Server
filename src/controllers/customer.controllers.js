@@ -176,4 +176,30 @@ const allEvents = async (req, res) => {
     }
   }
 
-module.exports = {allEvents,ticketBooking,ticketBookingPayment,cancleTicket,myEvents}
+  const myTransaction = async (req, res) => {
+    try {
+      const status = req.query.status
+      let match = { user_id: req.user._id }
+      if (status)
+        match = Object.assign(match, { status })
+      console.log("query", match, status)
+      const pastEvents = await TicketTransaction.aggregate([
+        { $match: match },
+        {
+          $lookup: {
+            "from": 'auditoriumbookings',
+            'localField': 'event_id',
+            "foreignField": '_id',
+            "as": 'event'
+          }
+        },
+        //{ $project: { updatedAt: 0, createdAt: 0, "event.timeSlots": 0, "event.total_cost": 0, "event.organizer_id": 0, "event.auditorium_id": 0, "event.available_tickets": 0, "event.total_tickets": 0 } },
+        { $project: { _id: 1, total_price: 1, user_id: 1, status: 1, "event.event_name": 1, createdAt: 1, "event._id": 1 } },
+        { $sort: { createdAt: 1 } }
+      ])
+      res.status(200).send(pastEvents)
+    } catch (err) {
+      res.status(400).send({ error: err.message })
+    }
+  }
+module.exports = {allEvents,ticketBooking,ticketBookingPayment,cancleTicket,myEvents,myTransaction}
