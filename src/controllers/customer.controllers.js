@@ -8,6 +8,8 @@ const AuditoriumBooking = require("../models/auditoriumBooking.model");
 const { ObjectId } = require("mongodb");
 // const { convertDate, isValidEventUpdateDate } = require("../utils/utils");
 
+const {convertDate} = require("../utils/utils")
+
 
 const allEvents = async (req, res) => { 
     try {
@@ -123,4 +125,55 @@ const allEvents = async (req, res) => {
     }
   }
 
-module.exports = {allEvents,ticketBooking,ticketBookingPayment}
+  const cancleTicket =  async (req, res) => {
+    try {
+      if (!isValidEventUpdateDate) {
+        res.status(400).send({ message: "Can't cancle ticket now" })
+      }
+      const session = await mongoose.startSession()
+      session.startTransaction()
+      try {
+        const ticket = await TicketTransaction.findByIdAndUpdate({ _id: req.params.ticketId }, { $set: { status: "cancel" } })
+        await AuditoriumBooking.findByIdAndUpdate({ _id: ticket.event_id }, { $inc: { "available_tickets": ticket.tickets.length } })
+        console.log("tikcet", ticket)
+        await session.commitTransaction()
+        res.status(200).send({ message: "Ticket deleted" })
+      } catch (err) {
+        await session.abortTransaction()
+        res.status(500).send({ error: err.message })
+      }
+      res.status(200).send(ticket)
+    } catch (err) {
+      res.status().send({ error: err.message })
+    }
+  }
+
+  const myEvents = async (req, res) => {
+    try {
+      console.log("in my events");
+      let date = Date.now(), match = {}
+      date = convertDate(date)
+      if (req.query.events == "0")
+        match = { $lt: date }
+      else match = { $gte: date }
+      console.log("match", match)
+      const pastEvents = await TicketTransaction.aggregate([
+        { $match: { user_id: req.user._id, status: "Confirmed" } },
+        {
+          $lookup: {
+            "from": 'auditoriumbookings',
+            'localField': 'event_id',
+            "foreignField": '_id',
+            "as": 'event'
+          }
+        },
+        { $project: { updatedAt: 0, createdAt: 0, "event.timeSlots": 0, "event.total_cost": 0, "event.organizer_id": 0, "event.auditorium_id": 0, "event.available_tickets": 0, "event.total_tickets": 0 } },
+        { $match: { "event.event_date": match } }
+      ])
+      res.status(200).send(pastEvents)
+    } catch (err) {
+      res.status(400).send({ error: err.message })
+    }
+  }
+
+module.exports = {allEvents,ticketBooking,ticketBookingPayment,cancleTicket,myEvents}
