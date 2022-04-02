@@ -2,6 +2,7 @@ const Auditorium = require('../models/auditorium.model')
 const AuditoriumBooking = require('../models/auditoriumBooking.model')
 // const sharp = require('sharp')
 
+
 const auditoriumDetails = async (req, res) => {
     console.log("manager : ", req.user._id, req.user.name)
     const auditoriumDetails = await Auditorium.find({ manager_id: req.user._id })
@@ -9,11 +10,12 @@ const auditoriumDetails = async (req, res) => {
 }
 
 const uploadAuditoriumimage = async (req, res) => {
+    console.log('upload')
     try {
         const auditorium = await Auditorium.findOne({ manager_id: req.params.managerId })
         let uploadedImages = []
         for (let image of req.files) {
-            const buffer = await sharp(image.buffer).png().resize({ height: 250, width: 250 }).toBuffer()
+            // const buffer = await sharp(image.buffer).png().resize({ height: 250, width: 250 }).toBuffer()
             uploadedImages.push({ image: buffer })
             console.log("buffer", buffer)
         }

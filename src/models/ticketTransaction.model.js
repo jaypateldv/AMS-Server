@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('./user.model');
 const { objectId } = require('mongodb');
-const { number } = require('sharp/lib/is');
+
 
 const ticketTranactionSchema = new mongoose.Schema({
     seat_numbers: {

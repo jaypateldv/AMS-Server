@@ -3,19 +3,31 @@ const router = new express.Router()
 const Authtoken = require('../middlewares/authMiddleware')
 const { isManager } = require('../middlewares/roleMiddleware')
 const managercontroller = require('../controllers/manager.controllers')
+const multer = require('multer')
 router.get("/", async (req, res,) => {
     res.send("from manager")
 })
 
-router.get('/manager/auditoriumDetails', [Authtoken, isManager], managercontroller.auditoriumDetails)
+router.get('/auditoriumDetails', [Authtoken, isManager], managercontroller.auditoriumDetails)
 
-router.post('/manager/uploadAudiImages/:managerId', isManager, managercontroller.uploadAuditoriumimage)
+const image = multer({
+    limits: {
+        fileSize: 5000000 // less then 5 MB
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            return cb(new Error('Please upload avatar with valid extention'))
+        }
+        cb(undefined, true)
+    }
+})
+router.post('/uploadAudiImages/:managerId',image.array('image'), managercontroller.uploadAuditoriumimage)
 
-router.get('/manager/auditoriumEvents',[Authtoken, isManager],managercontroller.getAuditoriumdetails)
+router.get('/auditoriumEvents',[Authtoken, isManager],managercontroller.getAuditoriumdetails)
 
-router.patch('/manager/update/auditoriumDetails',[Authtoken, isManager],managercontroller.updateAuditoriumdetails)
+router.patch('/update/auditoriumDetails',[Authtoken, isManager],managercontroller.updateAuditoriumdetails)
 
-router.delete('/manager/delete/event',[Authtoken, isManager],managercontroller.deleteEvent)
+router.delete('/delete/event',[Authtoken, isManager],managercontroller.deleteEvent)
 
 
 module.exports = router
