@@ -5,8 +5,9 @@ const authToken = async (req, res, next) => {
     console.log("auth")
     try {
         const token = req.header('Authorization').split(" ")[1]
+        console.log("get  token", token)
         const decoded = jwt.verify(token, process.env.JWTSECRETE)
-        const user = await User.findOne({ _id: decoded._id, 'tokens.token': token })
+        const user = await User.findOne({ _id: decoded._id})
         if (!user) {
             throw new Error("User not authorized.")
         }
