@@ -3,7 +3,9 @@ const validator = require("validator")
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
+
 // const User = require('../models/user.model')
+
 
 const AuditoriumBookingSchema = new mongooese.Schema(
     {
