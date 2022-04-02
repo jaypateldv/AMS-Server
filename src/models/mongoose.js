@@ -7,8 +7,8 @@ mongoose.connect(process.env.MONGODBURL,{
 
 })
 mongoose.connection.on('connected',()=>{
-    console.log("connected to mongo")
+    console.log("Connected to Mongo Database")
 })
 mongoose.connection.on('error',(err)=>{
-    console.log("err to connect ",err)
+    console.log("Enable to connect!",err)
 })
