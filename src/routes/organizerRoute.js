@@ -4,7 +4,7 @@ const authToken = require('../middlewares/authMiddleware')
 const { isOrganizer } = require('../middlewares/roleMiddleware')
 const organizerCtrl = require('../controllers/organizer.controllers')
 
-router.get("/",async(req,res,)=>{
+router.get("/", async (req, res,) => {
     res.send("from organizer")
 })
 
@@ -13,6 +13,7 @@ router.get("/getAvailableSlots", [authToken, isOrganizer], organizerCtrl.getallt
 router.post("/bookAuditorium", [authToken, isOrganizer], organizerCtrl.bookAuditorium)
 router.get("/allEvents", [authToken, isOrganizer], organizerCtrl.allEvents)
 router.get("/purchaseHistory", [authToken, isOrganizer], organizerCtrl.purchaseHistory)
+router.patch(('/update/eventDetails/:eventId'), [authToken, isOrganizer], organizerCtrl.updateEventById)
 
-module.exports= router
+module.exports = router
 

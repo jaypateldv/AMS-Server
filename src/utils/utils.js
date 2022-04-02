@@ -16,10 +16,10 @@ const isValidEventUpdateDate = (event_date) => {
     let current_date = Date.now()
     current_date = new Date(current_date)
     event_date = new Date(event_date)
-    const diff = (current_date.getTime() - event_date.getTime()) / (1000 * 60 * 60 * 24)
+    const diff = (event_date.getTime() - current_date.getTime()) / (1000 * 60 * 60 * 24)
     console.log("date diff : ", diff, current_date, event_date)
     if (diff > 2)
-        return false
+        return true
 }
 
 const convertDate = (date) => {

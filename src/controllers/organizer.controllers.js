@@ -4,6 +4,7 @@ const AuditoriumBooking = require('../models/auditoriumBooking.model')
 const { isValidBookingDate, getMergeTimeSlots, AvailableTime} = require('../utils/utils')
 const time = require('../models/allSlots.json')
 const audiBookingPayment = require('../models/auditoriumPayment.model')
+const { isValidEventUpdateDate } = require('../utils/utils')
 
 const findAuditorium = async (req,res) => {
     try {
@@ -72,7 +73,7 @@ const allEvents = async (req,res) => {
         if (req.query._id)
             match = { organizer_id: req.user._id }
         else match = req.query ? req.query : {};
-        console.log("query", match)
+        console.log("-----> query", match)
         const allEvents = await AuditoriumBooking.aggregate([
             { $match: match },
         ]);
@@ -106,11 +107,42 @@ const purchaseHistory = async (req,res) => {
     }
 }
 
+const updateEventById = async (req,res) => {
+    try {
+        const eventId = req.params.eventId
+        const updates = Object.keys(req.body)
+        const allowedUpdates = ["description", "event_name", "category", "ticket_price"]
+        const isValidUpdate = updates.every((update) => allowedUpdates.includes(update))
+        const event = await AuditoriumBooking.findById(eventId)
+        if (event.total_tickets != event.available_tickets)
+            res.status(400).send({ error: "Now you can't update ticket price" })
+
+        if (!isValidUpdate)
+            return res.status(400).send("Invalid Updates..")
+
+        if (!isValidEventUpdateDate(event.event_date))
+            return res.status(400).send({ error: "can't update event details now" })
+
+        console.log("_id : ", req.user._id)
+        try {
+            const updatedEvent = await AuditoriumBooking.findOneAndUpdate({ _id: eventId }, req.body, { new: true, runValidators: true })
+            if (!updatedEvent)
+                return res.status(404).send("Event not found")
+            res.status(200).send(updatedEvent)
+        } catch (err) {
+            res.status(400).send(err.message)
+        }
+    } catch (err) {
+        res.status(400).send({ error: err.message })
+    }
+}
+
 module.exports = {
     findAuditorium,
     getalltimeslots,
     bookAuditorium,
     allEvents,
-    purchaseHistory
+    purchaseHistory,
+    updateEventById
 }
     
