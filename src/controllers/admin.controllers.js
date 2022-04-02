@@ -16,7 +16,7 @@ const managerList = async (req, res) => {
             { $skip: skip }
         ])
         // res.status(200).send({ count: pendingList.length, pendingList })
-        res.status(200).send(managerList)
+        res.status(200).send({managerList,count:managerList.length})
 
     } catch (err) {
         res.status(400).send(err.message)

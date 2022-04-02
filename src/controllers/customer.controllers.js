@@ -56,4 +56,71 @@ const allEvents = async (req, res) => {
     }
   }
 
-module.exports = {allEvents,ticketBooking}
+  const ticketBookingPayment = async (req, res) => {
+
+    try {
+  
+      const cTrans_id = req.body.cTrans_id
+      const amount = req.body.amount
+      const sender = req.user._id
+      const { status, seat_numbers } = await TicketTransaction.findById(req.body.cTrans_id)
+      console.log("status", status)
+      if (status == "Confirmed")
+        throw new Error("Payment already completed")
+      const session = await mongoose.startSession()
+      session.startTransaction()
+  
+      try {
+        const { total_price, event_id } = await TicketTransaction.findById(cTrans_id)
+  
+        if (req.params.status == "Confirmed") {
+          console.log("2")
+          if (amount < total_price || amount > total_price)
+            throw new Error(`User ${sender.name} you have enter wrong amount`)
+          else if (amount == total_price) {
+            for (const s of seat_numbers) {
+              const ticket_price = total_price / seat_numbers.length
+              console.log("tp", ticket_price);
+              TicketTransaction.findOneAndUpdate(
+                { _id: cTrans_id },
+                { $push: { tickets: { "t_price": ticket_price, "seat_no": s } } },
+  
+                function (error, success) {
+                  if (error) {
+                    console.log(error);
+                  } else {
+                    console.log(success);
+                  }
+                });
+            }
+            await TicketTransaction.findByIdAndUpdate(cTrans_id, { status: "true" })
+            await AuditoriumBooking.findByIdAndUpdate(event_id, { $inc: { available_tickets: (seat_numbers.length * (-1)) } })
+            await session.commitTransaction()
+            return res.json({ amount, status: req.params.status })
+          }
+        }
+        else {
+          console.log("falied payment")
+          await TicketTransaction.findOneAndUpdate({ _id: req.body.cTrans_id },
+            { seat_numbers: 0, status: "Failed" })
+          await session.commitTransaction()
+          return res.json({ amount, status: "Failed", message: "Booking has been cancel" })
+        }
+      } catch (err) {
+        // const bookingConfirmation = new AudiBookingPayment({ user_id: sender, event_id, amount, status: "Pending" })
+        // await bookingConfirmation.save()
+        console.log("in abort :", err.message)
+        await session.abortTransaction()
+        return res.json({ amount, status: "Pending", error: err.message })
+  
+      } finally {
+        session.endSession()
+      }
+  
+    } catch (err) {
+      console.log("err", err.message)
+      return res.send({ error: err.message })
+    }
+  }
+
+module.exports = {allEvents,ticketBooking,ticketBookingPayment}

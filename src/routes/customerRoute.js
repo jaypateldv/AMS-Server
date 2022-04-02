@@ -11,6 +11,7 @@ router.get("/",async(req,res,)=>{
 
 router.get("/allEvents",[authToken,isCustomer],customerController.allEvents)
 router.post("/ticketBooking",[authToken,isCustomer],customerController.ticketBooking)
+router.post("/ticketBookingPayment/:status",[authToken,isCustomer],customerController.ticketBookingPayment)
 
 module.exports= router
 
