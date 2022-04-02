@@ -1,9 +1,8 @@
 const User = require('../models/user.model')
-const Auditorium = require('../models/auditorium.model')
-const TicketTransaction = require("../models/ticketTransaction")
+const Auditorium = require('../models/auditorium.model') 
 
 
-const managerList = async () => {
+const managerList = async (req,res) => {
     try {
         let query = req.query.status ? { verificationStatus: req.query.status, role: "manager" } : {}
         let skip = req.query.skip ? Number(req.query.skip) : 0
@@ -24,23 +23,23 @@ const managerList = async () => {
     }
 }
 
-// const setManagerStatus = async (req,res) => {
-//     try {
-//         const Updatedmanager = await User.findByIdAndUpdate(req.body.managerId, { verificationStatus: req.body.verificationStatus }, { new: true, runValidators: true })
-//         if (Updatedmanager) {
-//             if (Updatedmanager.verificationStatus == "true")
-//                 a=1
-//             else
-//             a=1
+const setManagerStatus = async (req,res) => {
+    try {
+        const Updatedmanager = await User.findByIdAndUpdate(req.body.managerId, { verificationStatus: req.body.verificationStatus }, { new: true, runValidators: true })
+        if (Updatedmanager) {
+            if (Updatedmanager.verificationStatus == "true")
+                a=1
+            else
+            a=1
 
-//             res.status(200).send(Updatedmanager)
-//         }
-//         else res.status(404).send("Manager not found..")
-//     } catch (err) {
-//         res.status(404).send(err.message)
-//     }
-// }
+            res.status(200).send(Updatedmanager)
+        }
+        else res.status(404).send("Manager not found..")
+    } catch (err) {
+        res.status(404).send(err.message)
+    }
+}
 module.exports = {
     managerList,
-   // setManagerStatus
+   setManagerStatus
 }
