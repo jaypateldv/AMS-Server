@@ -27,7 +27,7 @@ const userSchema = new mongooese.Schema(
             type: Number,
             required:true,
             validate(v) {
-                if (v.minlength = 10) throw new Error('contact must be a 10 digits')
+                if (v.minlength == 10) throw new Error('contact must be a 10 digits')
             }
         },
         role: {
@@ -99,7 +99,7 @@ userSchema.methods.generateAuthToken = async function () {
     const user = this
     const token = await jwt.sign({ _id: user._id.toString() }, 'thisismysecretforkwttoken')
     user.tokens = user.tokens.concat({ token })
-    await user.save()
+    //await user.save()
     return token
 }
 
@@ -120,6 +120,6 @@ userSchema.pre('save', async function (next) {
 })
 
 
-const User = mongooese.model('User', userSchema)
+const User = mongooese.model('User', userSchema)    
 
 module.exports = User
