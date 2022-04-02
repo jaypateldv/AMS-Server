@@ -1,6 +1,7 @@
 const User = require("../models/user.model")
 const Auditorium = require("../models/auditorium.model")
 const { Router } = require("express")
+const email = require("../email/account")
 
 const login = async (req, res, next) => {
     console.log("in user.controllers => logjn")
@@ -41,13 +42,13 @@ const signUp = async (req, res, next) => {
                 costPerHour: req.body.costPerHour,
                 auditoriumDescription: req.body.auditoriumDescription
             })
-
             await auditorium.save()
-            req.header.authorization = "Bearer " + authtoken
-
+            email.sendVerificationPendingMail(user.email,user.name)
+            req.header.authorization = "Bearer " + authToken
             return res.status(201).send({ username: user.name, auditoriumname: auditorium.auditoriumName, authToken })
         }
-        req.he
+        // req.he
+        email.sendWelcomeMail(user.email,user.name)
         return res.status(201).send({ user, authToken })
     } catch (error) {
         res.status(400).send({ error: error.message })
