@@ -11,6 +11,8 @@ router.get("/",async(req,res,)=>{
 router.get("/auditorium", [authToken, isOrganizer], organizerCtrl.findAuditorium)
 router.get("/getAvailableSlots", [authToken, isOrganizer], organizerCtrl.getalltimeslots)
 router.post("/bookAuditorium", [authToken, isOrganizer], organizerCtrl.bookAuditorium)
+router.get("/allEvents", [authToken, isOrganizer], organizerCtrl.allEvents)
+router.get("/purchaseHistory", [authToken, isOrganizer], organizerCtrl.purchaseHistory)
 
 module.exports= router
 

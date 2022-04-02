@@ -3,6 +3,7 @@ const Auditorium = require('../models/auditorium.model')
 const AuditoriumBooking = require('../models/auditoriumBooking.model')
 const { isValidBookingDate, getMergeTimeSlots, AvailableTime} = require('../utils/utils')
 const time = require('../models/allSlots.json')
+const audiBookingPayment = require('../models/auditoriumPayment.model')
 
 const findAuditorium = async (req,res) => {
     try {
@@ -19,6 +20,7 @@ const findAuditorium = async (req,res) => {
         res.send({ error: err.message })
     }
 }
+
 const getalltimeslots = async (req,res) => {
     console.log("getalltimeslots")
     try {
@@ -64,9 +66,51 @@ const bookAuditorium = async (req,res) => {
     }
 }
 
+const allEvents = async (req,res) => {
+    try {
+        let match = {}
+        if (req.query._id)
+            match = { organizer_id: req.user._id }
+        else match = req.query ? req.query : {};
+        console.log("query", match)
+        const allEvents = await AuditoriumBooking.aggregate([
+            { $match: match },
+        ]);
+        res.send(allEvents);
+    } catch (err) {
+        res.send({ error: err.message });
+    }
+}
+
+const purchaseHistory = async (req,res) => {
+    try {
+        let match = { user_id: req.user._id }
+        let sort = {}
+        if (req.query.status)
+            Object.assign(match, { status: req.query.status })
+        console.log(match)
+        if (req.query.sortBy) {
+            let sortBy = req.query.sortBy.split(" ")[0]
+            let order = req.query.sortBy.split(" ")[1]
+            sort = { [sortBy]: Number(order) }
+        }
+
+        console.log("sort", sort)
+        const purchaseHistory = await audiBookingPayment.aggregate([
+            { $match: match },
+            { $sort: sort }
+        ])
+        res.status(200).send(purchaseHistory)
+    } catch (err) {
+        res.status(400).send({ error: err.message })
+    }
+}
+
 module.exports = {
     findAuditorium,
     getalltimeslots,
-    bookAuditorium
+    bookAuditorium,
+    allEvents,
+    purchaseHistory
 }
     
