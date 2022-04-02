@@ -9,22 +9,22 @@ router.get("/",async(req,res,)=>{
 })
 
 // see all manager
-router.get("/admin/managerList",[authToken,isAdmin], adminCtrl.managerList) 
+router.get("/managerList",[authToken,isAdmin], adminCtrl.managerList) 
 
 // for changing manager status
-router.post('/admin/setManagerStatus', [authToken, isAdmin], adminCtrl.setManagerStatus)
+router.post('/setManagerStatus', [authToken, isAdmin], adminCtrl.setManagerStatus)
 
 // Accepted manager list
-router.get("/admin/acceptedList", [authToken, isAdmin], adminCtrl.acceptedList)
+router.get("/acceptedList", [authToken, isAdmin], adminCtrl.acceptedList)
 
 // Rejected manager list
-router.get("/admin/rejectedList", [authToken, isAdmin], adminCtrl.rejectedList)
+router.get("/rejectedList", [authToken, isAdmin], adminCtrl.rejectedList)
 
 // Remove User By Id
-router.get("/admin/removeUser:userId", [authToken, isAdmin], adminCtrl.removeUserById)
+router.get("/removeUser:userId", [authToken, isAdmin], adminCtrl.removeUserById)
 
 // return all users
-router.get("/admin/allUsers", [authToken, isAdmin], adminCtrl.allUsers)
+router.get("/allUsers", [authToken, isAdmin], adminCtrl.allUsers)
 
 module.exports= router
 

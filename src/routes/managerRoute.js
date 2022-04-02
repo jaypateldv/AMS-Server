@@ -7,15 +7,15 @@ router.get("/", async (req, res,) => {
     res.send("from manager")
 })
 
-router.get('/manager/auditoriumDetails', [Authtoken, isManager], managercontroller.auditoriumDetails)
+router.get('/auditoriumDetails', [Authtoken, isManager], managercontroller.auditoriumDetails)
 
-router.post('/manager/uploadAudiImages/:managerId', isManager, managercontroller.uploadAuditoriumimage)
+router.post('/uploadAudiImages/:managerId', isManager, managercontroller.uploadAuditoriumimage)
 
-router.get('/manager/auditoriumEvents',[Authtoken, isManager],managercontroller.getAuditoriumdetails)
+router.get('/auditoriumEvents',[Authtoken, isManager],managercontroller.getAuditoriumdetails)
 
-router.patch('/manager/update/auditoriumDetails',[Authtoken, isManager],managercontroller.updateAuditoriumdetails)
+router.patch('/update/auditoriumDetails',[Authtoken, isManager],managercontroller.updateAuditoriumdetails)
 
-router.delete('/manager/delete/event',[Authtoken, isManager],managercontroller.deleteEvent)
+router.delete('/delete/event',[Authtoken, isManager],managercontroller.deleteEvent)
 
 
 module.exports = router
