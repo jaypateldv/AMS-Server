@@ -13,6 +13,10 @@ router.post('/manager/uploadAudiImages/:managerId', isManager, managercontroller
 
 router.get('/manager/auditoriumEvents',[Authtoken, isManager],managercontroller.getAuditoriumdetails)
 
+router.patch('/manager/update/auditoriumDetails',[Authtoken, isManager],managercontroller.updateAuditoriumdetails)
+
+router.delete()
+
 
 module.exports = router
 

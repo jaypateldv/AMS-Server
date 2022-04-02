@@ -40,8 +40,43 @@ const getAuditoriumdetails = async (req, res) => {
     }
 }
 
+const updateAuditoriumdetails = async (req, res) => {
+    const updates = Object.keys(req.body)
+    const allowedUpdates = ["auditoriumName", "address", "city", "capacity", "costPerHour"]
+    const isValidUpdate = updates.every((update) => allowedUpdates.includes(update))
+    if (!isValidUpdate)
+        return res.status(400).send("Invalid Updates..")
+    console.log("_id : ", req.user._id)
+    try {
+        const auditorium = await Auditorium.findOneAndUpdate({ manager_id: req.user._id }, req.body, { new: true, runValidators: true })
+        if (!auditorium)
+            return res.status(404).send("Auditorium not found")
+        res.status(200).send(auditorium)
+    } catch (err) {
+        res.status(400).send(err.message)
+    }
+
+}
+
+const deleteEvent = async (req, res) => {
+    try {
+        const event = await AuditoriumBooking.findById(req.body.event_id)
+        if (!event) {
+            throw new Error("Event not found")
+        }
+        else {
+            event.remove();
+            res.send("delete Successfully")
+        }
+    } catch (err) {
+        res.status(400).send(err.message)
+    }
+}
+
 module.exports = {
     auditoriumDetails,
     uploadAuditoriumimage,
-    getAuditoriumdetails
+    getAuditoriumdetails,
+    updateAuditoriumdetails,
+    deleteEvent
 }
