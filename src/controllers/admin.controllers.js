@@ -75,7 +75,11 @@ const removeUserById = async (req, res) => {
 
 const allUsers = async (req, res) => {
     try {
-        const users = await User.find(req.query)
+        // const users = await User.find({role:{$not:{$eq:"admin"}}})
+        const users =  await User.aggregate([
+            {$match:{role:{$not:{$eq:"admin"}}}},
+            {$sort:{role:-1}}
+        ])
         res.status(200).send(users)
     } catch (err) {
         res.status(400).send({ error: err.message })
