@@ -17,16 +17,15 @@ const getAllAuditorium = async (req,res) => {
         }
         else auditoriumDetails = await Auditorium.find()
         if (!auditoriumDetails[0])
-            return res.send({ message: "There is not auditorium availabe right now.!!" })
+            return res.status(404).send({ message: "There is not auditorium availabe right now.!!" })
         res.status(200).send(auditoriumDetails)
     } catch (err) {
-        res.send({ error: err.message })
+        res.status(400).send({ error: err.message })
     }
 }
 
 // Display Available Slots to Organizer
 const getAvailableTimeSlots = async (req,res) => {
-    console.log("getalltimeslots")
     try {
         const audiId = req.body.auditorium_id
         const date = req.body.date
@@ -37,13 +36,12 @@ const getAvailableTimeSlots = async (req,res) => {
             { $match: { auditorium_id: mongoose.Types.ObjectId(audiId), event_date: date } },
             { $project: { timeSlots: 1, _id: 0 } }
         ])
-        console.log("bookedslot", bookedSlots)
         bookedSlots = getMergeTimeSlots(bookedSlots)
         let availableTimings = []
         const availableTimeSlots = AvailableTime(time, bookedSlots, availableTimings)
-        res.send(availableTimeSlots).status(200)
+        res.status(200).send(availableTimeSlots)
     } catch (err) {
-        res.send({ error: err.message })
+        res.status(400).send({ error: err.message })
     }
 }
 
@@ -53,7 +51,7 @@ const bookAuditorium = async (req,res) => {
         const timeSlots = req.body.timeSlots
         const status = isValidBookingDate(req.body.event_date)
         if (status != "booked")
-            return res.send({ status })
+            return res.status(200).send({ status })
         const auditorium = await Auditorium.findById(req.body.auditorium_id)
         const booking = new AuditoriumBooking({
             ...req.body,
@@ -78,13 +76,12 @@ const allEvents = async (req,res) => {
         if (req.query._id)
             match = { organizer_id: req.user._id }
         else match = req.query ? req.query : {};
-        console.log("-----> query", match)
         const allEvents = await AuditoriumBooking.aggregate([
             { $match: match },
         ]);
-        res.send(allEvents);
+        res.status(200).send(allEvents);
     } catch (err) {
-        res.send({ error: err.message });
+        res.status(400).send({ error: err.message });
     }
 }
 
@@ -95,15 +92,12 @@ const purchaseHistory = async (req,res) => {
         let sort = {}
         if (req.query.status)
             Object.assign(match, { status: req.query.status })
-        console.log(match)
         if (req.query.sortBy) {
             let sortBy = req.query.sortBy.split(" ")[0]
             let order = req.query.sortBy.split(" ")[1]
             sort = { [sortBy]: Number(order) }
         }
-
-        console.log("sort", sort)
-        const purchaseHistory = await audiBookingPayment.aggregate([
+        const purchaseHistory = await AudiBookingPayment.aggregate([
             { $match: match },
             { $sort: sort }
         ])
@@ -147,48 +141,38 @@ const updateEventById = async (req,res) => {
 // Check Auditorium Booking Payment Status of Organizer
 const auditoriumBookingPayment = async (req,res) => {
     try {
-
         const event_id = req.body.event_id
         const amount = req.body.amount
         const sender = req.user._id
         const {status }= await AuditoriumBooking.findById(event_id)
-        console.log("status", status)
         if (status == "True")
             throw new Error("Payment already completed")
         const session = await mongoose.startSession()
         session.startTransaction()
-
         try {
-
             const { total_cost } = await AuditoriumBooking.findById(req.body.event_id)
             const bookingConfirmation = new AudiBookingPayment({ user_id: sender, event_id, amount, status: "True" })
-            console.log("com", amount, total_cost)
-            console.log("1")
             if (req.params.status == "True") {
-                console.log("2")
                 if (amount < total_cost || amount > total_cost)
                     throw new Error(`User ${sender.name} you have enter wrong amount`)
                 else if (amount == total_cost) {
                     await AuditoriumBooking.findByIdAndUpdate(event_id, { status: "True" })
                     await bookingConfirmation.save()
                     await session.commitTransaction()
-                    return res.json({ amount, status: bookingConfirmation.status })
+                    return res.status(200).json({ amount, status: bookingConfirmation.status })
                 }
             } 
             else {
-                console.log("falied payment")
                 await AuditoriumBooking.findByIdAndDelete(event_id)
                 const bookingConfirmation = new AudiBookingPayment({ user_id: sender, event_id, amount, status: "False" })
                 await bookingConfirmation.save()
                 await session.commitTransaction()
-                email.sendAuditoriumBookingConfirmationMail(req.user.name,booking,total_cost)
+                email.sendAuditoriumBookingFaliedMail(req.user.name,booking,total_cost)
                 return res.json({ amount, status: bookingConfirmation.status, message: "Booking has been cancel" })
             }
         } catch (err) {
-
             const bookingConfirmation = new AudiBookingPayment({ user_id: sender, event_id, amount, status: "False" })
             await bookingConfirmation.save()
-            console.log("in abort :", err.message)
             await session.abortTransaction()
             email.sendAuditoriumBookingFaliedMail(req.user.name,booking,total_cost)
             return res.json({ amount, status: bookingConfirmation.status, error: err.message })

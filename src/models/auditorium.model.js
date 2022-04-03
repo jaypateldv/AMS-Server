@@ -26,7 +26,7 @@ const auditoriumSchema = new mongoose.Schema({
     },
     costPerHour: {
         type: Number,
-        //required:true
+        required:true
     },
     auditoriumDescription: {
         type: String,
