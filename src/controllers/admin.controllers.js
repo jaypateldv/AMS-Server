@@ -4,7 +4,7 @@ const email = require("../email/account")
 const AuditoriumBooking = require('../models/auditoriumBooking.model')
 const ticketTransaction = require('../models/ticketTransaction.model')
 
-
+// display manager list to admin so admin can accept or reject
 const managerList = async (req, res) => {
     try {
         let query = req.query.status ? { verificationStatus: req.query.status, role: "manager" } : {}
@@ -26,6 +26,7 @@ const managerList = async (req, res) => {
     }
 }
 
+// for update status of manager after accepting manager's request
 const setManagerStatus = async (req, res) => {
     try {
         const Updatedmanager = await User.findByIdAndUpdate(req.body.managerId, { verificationStatus: req.body.verificationStatus }, { new: true, runValidators: true })
@@ -43,6 +44,7 @@ const setManagerStatus = async (req, res) => {
     }
 }
 
+// for displaying all accepted manager list to admin
 const acceptedList = async (req, res) => {
     try {
         var pendingList = []
@@ -52,6 +54,8 @@ const acceptedList = async (req, res) => {
         res.status(400).send(err.message)
     }
 }
+
+// for displaying all rejected manager list to admin
 const rejectedList = async (req, res) => {
     try {
         var pendingList = []
@@ -62,6 +66,7 @@ const rejectedList = async (req, res) => {
     }
 }
 
+// for admin to remove user by id (admin can remove reported user)
 const removeUserById = async (req, res) => {
     try {
         console.log(("id",req.params.userId));
@@ -73,6 +78,7 @@ const removeUserById = async (req, res) => {
     }
 }
 
+// for displaying all user list to admin
 const allUsers = async (req, res) => {
     try {
         // const users = await User.find({role:{$not:{$eq:"admin"}}})
@@ -85,10 +91,10 @@ const allUsers = async (req, res) => {
         res.status(400).send({ error: err.message })
     }
 }
+
+// for displaying All Events
 const getAllEvents = async (req, res) => {
     try {
-        // console.log("manager : ", req.user._id, req.user.name)
-        //const auditorium = await Auditorium.find();
         const eventDetails = await AuditoriumBooking.aggregate([
             {$match:{}},
             {$lookup:{
@@ -106,6 +112,7 @@ const getAllEvents = async (req, res) => {
     }
 }
 
+// exporting all admin function
 module.exports = {
     managerList,
     setManagerStatus,

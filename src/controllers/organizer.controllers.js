@@ -7,8 +7,8 @@ const time = require('../models/allSlots.json')
 const { isValidEventUpdateDate } = require('../utils/utils')
 const email = require("../email/account")
 
-
-const findAuditorium = async (req,res) => {
+// For Displaying all Auditorium to Organizer
+const getAllAuditorium = async (req,res) => {
     try {
         let auditoriumDetails
         const findBycity = req.query.city ? { city: req.query.city } : {}
@@ -24,7 +24,8 @@ const findAuditorium = async (req,res) => {
     }
 }
 
-const getalltimeslots = async (req,res) => {
+// Display Available Slots to Organizer
+const getAvailableTimeSlots = async (req,res) => {
     console.log("getalltimeslots")
     try {
         const audiId = req.body.auditorium_id
@@ -46,6 +47,7 @@ const getalltimeslots = async (req,res) => {
     }
 }
 
+// For Booking Auditorium
 const bookAuditorium = async (req,res) => {
     try {
         const timeSlots = req.body.timeSlots
@@ -56,19 +58,20 @@ const bookAuditorium = async (req,res) => {
         const booking = new AuditoriumBooking({
             ...req.body,
             organizer_id: req.user._id,
-            total_cost: req.body.timeSlots.length * auditorium.costPerHour,
+            total_cost: timeSlots.length * auditorium.costPerHour,
             total_tickets: auditorium.capacity,
             available_tickets: auditorium.capacity,
             city: auditorium.city,
         })
         const bookedDetails = await booking.save()
         const message = "Please make payment first to confirm your booking."
-        res.send({ BookingId: bookedDetails._id, total_cost: bookedDetails.total_cost, message }).status(200)
+        res.status(200).send({ BookingId: bookedDetails._id, total_cost: bookedDetails.total_cost, message })
     } catch (err) {
         res.status(404).send({ error: err.message })
     }
 }
 
+// Display all Events to Organizer
 const allEvents = async (req,res) => {
     try {
         let match = {}
@@ -85,6 +88,7 @@ const allEvents = async (req,res) => {
     }
 }
 
+// For Displaying Purchase History of Organizer
 const purchaseHistory = async (req,res) => {
     try {
         let match = { user_id: req.user._id }
@@ -109,11 +113,12 @@ const purchaseHistory = async (req,res) => {
     }
 }
 
+// Update Event Details By Id
 const updateEventById = async (req,res) => {
     try {
         const eventId = req.params.eventId
         const updates = Object.keys(req.body)
-        const allowedUpdates = ["description", "event_name", "category"]
+        const allowedUpdates = ["description", "event_name", "category","ticket_price"]
         const isValidUpdate = updates.every((update) => allowedUpdates.includes(update))
         const event = await AuditoriumBooking.findById(eventId)
         if (event.total_tickets != event.available_tickets)
@@ -139,6 +144,7 @@ const updateEventById = async (req,res) => {
     }
 }
 
+// Check Auditorium Booking Payment Status of Organizer
 const auditoriumBookingPayment = async (req,res) => {
     try {
 
@@ -198,8 +204,8 @@ const auditoriumBookingPayment = async (req,res) => {
 }
 
 module.exports = {
-    findAuditorium,
-    getalltimeslots,
+    getAllAuditorium,
+    getAvailableTimeSlots,
     bookAuditorium,
     allEvents,
     purchaseHistory,
