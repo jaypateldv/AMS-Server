@@ -1,0 +1,35 @@
+{
+  "name": "the-bug-slayers-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node ./src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "env-cmd -f ./config/development.env nodemon src/app.js",
+    "prod": "env-cmd -f ./config/production.env nodemon src/app.js"
+  },
+  "keywords": [
+    "auditoria",
+    "API",
+    "nodejs",
+    "Express"
+  ],
+  "author": "the bug slayers",
+  "license": "ISC",
+  "dependencies": {
+    "@sendgrid/mail": "^7.6.2",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "env-cmd": "^10.1.0",
+    "express": "^4.17.3",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.4.1",
+    "mongoose": "^6.2.9",
+    "multer": "^1.4.4",
+    "node-datetime": "^2.1.2",
+    "nodemon": "^2.0.15",
+    "sharp": "^0.30.3",
+    "validator": "^13.7.0"
+  }
+}
