@@ -28,7 +28,7 @@ router.get("/removeUser:userId", [authToken, isAdmin], adminCtrl.removeUserById)
 // return all users
 router.get("/allUsers", [authToken, isAdmin], adminCtrl.allUsers)
 
-router.get("/allUsers",[authToken,isAdmin], adminCtrl.allUsers) 
+router.get("/allEvents",[authToken,isAdmin], allEvents) 
 
 
 module.exports= router
