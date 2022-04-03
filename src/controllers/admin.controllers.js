@@ -85,6 +85,8 @@ const allUsers = async (req, res) => {
         res.status(400).send({ error: err.message })
     }
 }
+
+// for displaying All Events
 const getAllEvents = async (req, res) => {
     try {
         // console.log("manager : ", req.user._id, req.user.name)
