@@ -11,7 +11,7 @@ const email = require("../email/account")
 
 const { convertDate } = require("../utils/utils")
 
-
+// display all event details to customer
 const allEvents = async (req, res) => {
   try {
     let match = {};
@@ -38,7 +38,7 @@ const allEvents = async (req, res) => {
   }
 }
 
-
+// for booking auditorium's ticket
 const ticketBooking = async (req, res) => {
 
   try {
@@ -59,6 +59,7 @@ const ticketBooking = async (req, res) => {
   }
 }
 
+// for making payment of ticket
 const ticketBookingPayment = async (req, res) => {
 
   try {
@@ -127,6 +128,7 @@ const ticketBookingPayment = async (req, res) => {
   }
 }
 
+// for cancle booking of ticket
 const cancleTicket = async (req, res) => {
   try {
     if (!isValidEventUpdateDate) {
@@ -151,6 +153,7 @@ const cancleTicket = async (req, res) => {
   }
 }
 
+// display all event of particular customer ( display all my event)
 const myEvents = async (req, res) => {
   try {
     console.log("in my events");
@@ -179,6 +182,7 @@ const myEvents = async (req, res) => {
   }
 }
 
+// display all transaction of particular customer ( display all mytransactions)
 const myTransaction = async (req, res) => {
   try {
     const status = req.query.status
