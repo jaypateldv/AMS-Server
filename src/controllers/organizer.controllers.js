@@ -112,7 +112,7 @@ const updateEventById = async (req,res) => {
     try {
         const eventId = req.params.eventId
         const updates = Object.keys(req.body)
-        const allowedUpdates = ["description", "event_name", "category"]
+        const allowedUpdates = ["description", "event_name", "category","ticket_price"]
         const isValidUpdate = updates.every((update) => allowedUpdates.includes(update))
         const event = await AuditoriumBooking.findById(eventId)
         if (event.total_tickets != event.available_tickets)

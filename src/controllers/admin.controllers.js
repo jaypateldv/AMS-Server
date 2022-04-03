@@ -46,6 +46,7 @@ const setManagerStatus = async (req, res) => {
 // for admin to remove user by id (admin can remove reported user)
 const removeUserById = async (req, res) => {
     try {
+        console.log(("id",req.params.userId));
         const user = await User.findByIdAndRemove(req.params.userId)
         await TicketTransaction.deleteMany({ user_id: req.params.userId })
         email.sendCancelationMail(user.email, user.name)
@@ -58,7 +59,11 @@ const removeUserById = async (req, res) => {
 // for displaying all user list to admin
 const allUsers = async (req, res) => {
     try {
-        const users = await User.find(req.query)
+        // const users = await User.find({role:{$not:{$eq:"admin"}}})
+        const users =  await User.aggregate([
+            {$match:{role:{$not:{$eq:"admin"}}}},
+            {$sort:{role:-1}}
+        ])
         res.status(200).send(users)
     } catch (err) {
         res.status(400).send({ error: err.message })

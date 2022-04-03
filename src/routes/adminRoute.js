@@ -17,7 +17,7 @@ router.get("/managerList",[authToken,isAdmin], adminCtrl.managerList)
 router.post('/setManagerStatus', [authToken, isAdmin], adminCtrl.setManagerStatus)
 
 // Remove User By Id
-router.get("/removeUser:userId", [authToken, isAdmin], adminCtrl.removeUserById)
+router.get("/removeUser/:userId", [authToken, isAdmin], adminCtrl.removeUserById)
 
 // return all users
 router.get("/allUsers", [authToken, isAdmin], adminCtrl.allUsers)
