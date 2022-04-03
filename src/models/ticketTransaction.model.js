@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const User = require('./user.model');
-const { objectId } = require('mongodb');
-
 
 const ticketTranactionSchema = new mongoose.Schema({
     seat_numbers: {

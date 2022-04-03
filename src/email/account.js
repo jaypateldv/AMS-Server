@@ -69,10 +69,56 @@ const sendVerificationRejectedMail = (email, name) => {
             `
     })
 }
+const sendTicketConfirmationMail = (name,eventName,amout,eventDate,seatNumbers)=>{
+    sgmail.send({
+        to: email,
+        from: "pateljaykjp1@gmail.com",
+        subject: "Tickets Confirmation",
+        text:`Hello ${name}, your tickets for ${eventName} on date ${eventDate} is confirmed.\npayment aount : ${amout}\nseats numbers : ${seatNumbers}`
+    })
+}
+
+const sendTicketFaliedMail = (name,eventName,amout,eventDate,seatNumbers)=>{
+    sgmail.send({
+        to: email,
+        from: "pateljaykjp1@gmail.com",
+        subject: "Tickets Falied",
+        text:`Hello ${name}, your tickets for ${eventName} on date ${eventDate} is falied.\npayment aount : ${amout}\nseats numbers : ${seatNumbers}`
+    })
+}
+const sendCancleTicketMail = (name,eventName,eventDate,totalPrice)=>{
+    sgmail.send({
+        to: email,
+        from: "pateljaykjp1@gmail.com",
+        subject: "Tickets Cancellation",
+        text:`Hello ${name}, your tickets for ${eventName} on date ${eventDate} is cancele now.\npayment aount : ${totalPrice}`
+    })
+}
+const sendAuditoriumBookingConfirmationMail=(name,booking,cost)=>{
+    sgmail.send({
+        to: email,
+        from: "pateljaykjp1@gmail.com",
+        subject: "Auditorium Booking Confirmation",
+        text:`Hello ${name}, your auditorium booking with ${booking.event_name} is confirmed.\nEvent Details,\n Date : ${booking.event_date},Time Slots : ${booking.timeSlots}`
+    })
+}
+const sendAuditoriumBookingFaliedMail=(name,booking,cost)=>{
+    sgmail.send({
+        to: email,
+        from: "pateljaykjp1@gmail.com",
+        subject: "Auditorium Booking Confirmation",
+        text:`Hello ${name}, your auditorium booking with ${booking.event_name} is falied.`
+    })
+}
 module.exports = {
     sendWelcomeMail,
     sendCancelationMail,
     sendVerificationAcceptedMail,
     sendVerificationPendingMail,
-    sendVerificationRejectedMail
+    sendVerificationRejectedMail,
+    sendTicketConfirmationMail,
+    sendTicketFaliedMail,
+    sendCancleTicketMail,
+    sendAuditoriumBookingConfirmationMail,
+    sendAuditoriumBookingFaliedMail
 }

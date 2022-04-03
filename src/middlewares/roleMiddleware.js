@@ -1,6 +1,4 @@
 const isManagerSignUp = async (req, res, next) => {
-    console.log("rolemidldeware.js => isManagerSignUp  check")
-
     if (req.body.role == "manager") {
         const requireFields = ['name', 'email', 'auditoriumName', 'address', 'city', 'capacity', 'costPerHour']
 
@@ -13,28 +11,24 @@ const isManagerSignUp = async (req, res, next) => {
 }
 
 const isManager = async (req, res, next) => {
-    console.log("rolemidldeware.js => isManager() - role check  check",req.user.role)
     if (req.user.role !== "manager")
         return res.status(401).send({ error: "Unauthorized Perosn.." })
     next()
 }
 
 const isAdmin = async (req, res, next) => {
-    console.log("rolemidldeware.js => isAdmin() - role check  check")
     if (req.user.role !== "admin")
         return res.status(401).send({ error: "Unauthorized Perosn.." })
     next()
 }
 
 const isOrganizer = async (req, res, next) => {
-    console.log("rolemidldeware.js => isOrganizer() - role check  check")
     if (req.user.role !== "Event Organizer")
         return res.status(401).send({ error: "Unauthorized Perosn.." })
     next()
 }
 
 const isCustomer = async (req, res, next) => {
-    console.log("rolemidldeware.js => isCustomer() - role check  check")
     if (req.user.role !== "customer")
         return res.status(401).send({ error: "Unauthorized Perosn.." })
     next()

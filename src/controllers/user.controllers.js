@@ -1,28 +1,21 @@
 const User = require("../models/user.model")
 const Auditorium = require("../models/auditorium.model")
-const { Router } = require("express")
 const email = require("../email/account")
 
 // Handling User Log-in
 const login = async (req, res, next) => {
-    console.log("In user.controllers => login")
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const authToken = await user.generateAuthToken()
-        console.log("auth token", authToken)
         req.header.authorization = "Bearer " + authToken
-        console.log("headre token", req.header)
         res.status(200).send({ user, authToken })
-
     } catch (error) {
         res.status(400).send({ error: error.message })
     }
-
 }
 
 // Handling User Sign-up
 const signUp = async (req, res, next) => {
-    console.log("in user.controllers => signup")
     const user = new User({
         name: req.body.name,
         email: req.body.email,
@@ -33,7 +26,6 @@ const signUp = async (req, res, next) => {
     try {
         await user.save()
         const authToken = await user.generateAuthToken()
-
         if (req.body.role === "manager") {
             const auditorium = new Auditorium({
                 auditoriumName: req.body.auditoriumName,
@@ -83,10 +75,13 @@ const profileUpdate = async (req, res) => {
 // Delete User Account
 const deleteAccount = async (req, res) => {
     try {
+        const user = req.user
         await req.user.remove()
+        email.sendCancelationMail(user.email, user.name)
         res.status(200).send(req.user)
     } catch (error) {
         res.status(400).send(error.message)
     }
 }
+
 module.exports = { login, signUp, profile, profileUpdate, deleteAccount }
