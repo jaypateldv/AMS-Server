@@ -21,11 +21,12 @@ const image = multer({
         cb(undefined, true)
     }
 })
-router.post('/uploadAudiImages/:managerId',[Authtoken, isManager],image.array('image'), managercontroller.uploadAuditoriumimage)
-
-router.get('/auditoriumEvents',[Authtoken, isManager],managercontroller.getAuditoriumdetails)
 
 router.patch('/update/auditoriumDetails',[Authtoken, isManager],managercontroller.updateAuditoriumdetails)
+
+router.post('/uploadAudiImages/:managerId',[Authtoken, isManager],image.array('image'), managercontroller.uploadAuditoriumimage)
+
+router.get('/auditoriumEvents',[Authtoken, isManager],managercontroller.getBookedAuditoriumdetails)
 
 router.delete('/delete/event',[Authtoken, isManager],managercontroller.deleteEvent)
 

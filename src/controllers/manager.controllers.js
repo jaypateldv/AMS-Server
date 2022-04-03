@@ -31,7 +31,7 @@ const uploadAuditoriumimage = async (req, res) => {
     }
 }
 
-const getAuditoriumdetails = async (req, res) => {
+const getBookedAuditoriumdetails = async (req, res) => {
     try {
         console.log("manager : ", req.user._id, req.user.name)
         const auditorium = await Auditorium.findOne({ manager_id: req.user._id });
@@ -79,7 +79,7 @@ const deleteEvent = async (req, res) => {
 module.exports = {
     auditoriumDetails,
     uploadAuditoriumimage,
-    getAuditoriumdetails,
+    getBookedAuditoriumdetails,
     updateAuditoriumdetails,
     deleteEvent
 }
