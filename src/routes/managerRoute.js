@@ -4,12 +4,16 @@ const Authtoken = require('../middlewares/authMiddleware')
 const { isManager } = require('../middlewares/roleMiddleware')
 const managercontroller = require('../controllers/manager.controllers')
 const multer = require('multer')
+
+// intial route
 router.get("/", async (req, res,) => {
     res.send("from manager")
 })
 
+// for displaying  auditorium details to manager
 router.get('/auditoriumDetails', [Authtoken, isManager], managercontroller.auditoriumDetails)
 
+// for image uploading of audirtorium using multer
 const image = multer({
     limits: {
         fileSize: 5000000 // less then 5 MB
@@ -22,13 +26,17 @@ const image = multer({
     }
 })
 
-router.patch('/update/auditoriumDetails',[Authtoken, isManager],managercontroller.updateAuditoriumdetails)
+// for updating auditorium details
+router.patch('/update/auditoriumDetails', [Authtoken, isManager], managercontroller.updateAuditoriumdetails)
 
-router.post('/uploadAudiImages/:managerId',[Authtoken, isManager],image.array('image'), managercontroller.uploadAuditoriumimage)
+// for upload image of auditorium
+router.post('/uploadAudiImages/:managerId', [Authtoken, isManager], image.array('image'), managercontroller.uploadAuditoriumimage)
 
-router.get('/auditoriumEvents',[Authtoken, isManager],managercontroller.getBookedAuditoriumdetails)
+// for displaying all booked auditorium ( display all events)
+router.get('/auditoriumEvents', [Authtoken, isManager], managercontroller.getBookedAuditoriumdetails)
 
-router.delete('/delete/event',[Authtoken, isManager],managercontroller.deleteEvent)
+// for deleting a event
+router.delete('/delete/event', [Authtoken, isManager], managercontroller.deleteEvent)
 
 
 module.exports = router
