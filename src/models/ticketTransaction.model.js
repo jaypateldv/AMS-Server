@@ -32,6 +32,11 @@ const ticketTranactionSchema = new mongoose.Schema({
         required: true,
         ref: "AuditoriumBooking",
     },
+    status: {
+        type: String,
+        trim: true,
+        default: "Pending",
+      },
     tickets: [{
 
         seat_no: {
