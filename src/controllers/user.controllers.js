@@ -3,14 +3,15 @@ const Auditorium = require("../models/auditorium.model")
 const { Router } = require("express")
 const email = require("../email/account")
 
+// Handling User Log-in
 const login = async (req, res, next) => {
-    console.log("in user.controllers => logjn")
+    console.log("In user.controllers => login")
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const authToken = await user.generateAuthToken()
         console.log("auth token", authToken)
         req.header.authorization = "Bearer " + authToken
-        console.log("headre token",req.header)
+        console.log("headre token", req.header)
         res.status(200).send({ user, authToken })
 
     } catch (error) {
@@ -19,6 +20,7 @@ const login = async (req, res, next) => {
 
 }
 
+// Handling User Sign-up
 const signUp = async (req, res, next) => {
     console.log("in user.controllers => signup")
     const user = new User({
@@ -43,48 +45,48 @@ const signUp = async (req, res, next) => {
                 auditoriumDescription: req.body.auditoriumDescription
             })
             await auditorium.save()
-            email.sendVerificationPendingMail(user.email,user.name)
+            email.sendVerificationPendingMail(user.email, user.name)
             req.header.authorization = "Bearer " + authToken
             return res.status(201).send({ username: user.name, auditoriumname: auditorium.auditoriumName, authToken })
         }
-        // req.he
-        email.sendWelcomeMail(user.email,user.name)
+        email.sendWelcomeMail(user.email, user.name)
         return res.status(201).send({ user, authToken })
     } catch (error) {
         res.status(400).send({ error: error.message })
     }
 }
 
+// For Displaying User Profile
 const profile = async (req, res, next) => {
     console.log("user.controllers => profile")
     res.status(200).send(req.user)
 }
 
-const profileUpdate= async (req, res) => {
+// For Updating User Profile
+const profileUpdate = async (req, res) => {
     const updates = Object.keys(req.body)
-    const allowedUpdates = ["name", "email", "password", "age","contact"]
+    const allowedUpdates = ["name", "email", "password", "age", "contact"]
     const isValidUpdate = updates.every((update) => allowedUpdates.includes(update))
     if (!isValidUpdate)
         return res.status(400).send("Invalid Updates..")
-    //console.log("_id : ", req.user._id)
     try {
         updates.forEach((update) => req.user[update] = req.body[update])
         await req.user.save()
-        //const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
         if (!req.user)
-            return res.status(404).send("User not found")
+            return res.status(404).send("User not found!")
         res.status(200).send(req.user)
-    } catch (err) {
-        res.status(400).send(err.message)
+    } catch (error) {
+        res.status(400).send(error.message)
     }
 }
 
+// Delete User Account
 const deleteAccount = async (req, res) => {
     try {
         await req.user.remove()
         res.status(200).send(req.user)
-    } catch (err) {
-        res.status(400).send(err)
+    } catch (error) {
+        res.status(400).send(error.message)
     }
 }
-module.exports = { login, signUp, profile ,profileUpdate , deleteAccount}
+module.exports = { login, signUp, profile, profileUpdate, deleteAccount }

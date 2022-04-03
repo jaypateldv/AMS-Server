@@ -9,10 +9,10 @@ router.get("/", async (req, res,) => {
 })
 
 // Display all Auditorium to Event Organizer
-router.get("/auditorium", [authToken, isOrganizer], organizerCtrl.findAuditorium)
+router.get("/auditorium", [authToken, isOrganizer], organizerCtrl.getAllAuditorium)
 
 // Display AvailableSlots
-router.get("/getAvailableSlots", [authToken, isOrganizer], organizerCtrl.getalltimeslots)
+router.get("/getAvailableSlots", [authToken, isOrganizer], organizerCtrl.getAvailableTimeSlots)
 
 // Book Auditorium for an Event
 router.post("/bookAuditorium", [authToken, isOrganizer], organizerCtrl.bookAuditorium)

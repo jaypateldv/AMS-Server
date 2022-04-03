@@ -7,10 +7,10 @@ router.get("/", async (req, res,) => {
     res.send("from user")
 })
 
-// Handling user Sign-up
+// User Sign-up
 router.post('/signup', isManagerSignUp, userControllers.signUp)
 
-// Handling user Log-in
+// User Log-in
 router.post('/login', userControllers.login)
 
 // Display User Profile
