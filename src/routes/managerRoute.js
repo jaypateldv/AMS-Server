@@ -21,7 +21,7 @@ const image = multer({
         cb(undefined, true)
     }
 })
-router.post('/uploadAudiImages/:managerId',image.array('image'), managercontroller.uploadAuditoriumimage)
+router.post('/uploadAudiImages/:managerId',[Authtoken, isManager],image.array('image'), managercontroller.uploadAuditoriumimage)
 
 router.get('/auditoriumEvents',[Authtoken, isManager],managercontroller.getAuditoriumdetails)
 
