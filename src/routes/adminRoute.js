@@ -3,6 +3,8 @@ const router = new express.Router()
 const adminCtrl = require('../controllers/admin.controllers')
 const authToken   = require('../middlewares/authMiddleware')
 const  {isAdmin}  = require('../middlewares/roleMiddleware')
+const {allEvents} = require("../controllers/customer.controllers")
+
 
 router.get("/",async(req,res,)=>{
     res.send("from admin")
@@ -25,6 +27,9 @@ router.get("/removeUser:userId", [authToken, isAdmin], adminCtrl.removeUserById)
 
 // return all users
 router.get("/allUsers", [authToken, isAdmin], adminCtrl.allUsers)
+
+router.get("/allEvents",[authToken,isAdmin], allEvents) 
+
 
 module.exports= router
 
