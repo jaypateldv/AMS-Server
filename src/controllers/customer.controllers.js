@@ -31,6 +31,7 @@ const allEvents = async (req, res) => {
           updatedAt: 0,
         },
       },
+      {$sort:{createdAt:1}}
     ]);
     res.send(allEvents);
   } catch (err) {

@@ -1,6 +1,7 @@
 const User = require('../models/user.model')
 const Auditorium = require('../models/auditorium.model')
 const email = require("../email/account")
+const AuditoriumBooking = require('../models/auditoriumBooking.model')
 
 
 const managerList = async (req, res) => {
@@ -78,6 +79,26 @@ const allUsers = async (req, res) => {
         res.status(400).send({ error: err.message })
     }
 }
+const getAllEvents = async (req, res) => {
+    try {
+        // console.log("manager : ", req.user._id, req.user.name)
+        //const auditorium = await Auditorium.find();
+        const eventDetails = await AuditoriumBooking.aggregate([
+            {$match:{}},
+            {$lookup:{
+                "from":"users",
+                "localField":"organizer_id",
+                "foreignField":"_id",
+                "as":"bookedBy"
+            }},
+            {$project:{"bookedBy.email":0,"bookedBy.password":0,"bookedBy.verificationStatus":0,"bookedBy.role":0,"bookedBy.contact":0,"bookedBy.updatedAt":0,"bookedBy.createdAt":0}}
+        ])
+        res.send(eventDetails)
+    }
+    catch (err) {
+        res.status(400).send(err.message)
+    }
+}
 
 module.exports = {
     managerList,
@@ -85,5 +106,6 @@ module.exports = {
     acceptedList,
     rejectedList,
     removeUserById,
-    allUsers
+    allUsers,
+    getAllEvents
 }
