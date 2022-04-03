@@ -2,6 +2,7 @@ const User = require('../models/user.model')
 const Auditorium = require('../models/auditorium.model')
 const email = require("../email/account")
 const AuditoriumBooking = require('../models/auditoriumBooking.model')
+const TicketTransaction = require('../models/ticketTransaction.model')
 
 // display manager list to admin so admin can accept or reject
 const managerList = async (req, res) => {
@@ -39,31 +40,30 @@ const setManagerStatus = async (req, res) => {
         }
         else res.status(404).send("Manager not found..")
     } catch (err) {
-        res.status(404).send(err.message)
-    }
-}
-
-// for displaying all accepted manager list to admin
-const acceptedList = async (req, res) => {
-    try {
-        var pendingList = []
-        const managerList = await User.find({ verificationStatus: "true", role: "manager" })
-        res.status(200).send(managerList)
-    } catch (err) {
         res.status(400).send(err.message)
     }
 }
 
-// for displaying all rejected manager list to admin
-const rejectedList = async (req, res) => {
-    try {
-        var pendingList = []
-        const managerList = await User.find({ verificationStatus: "false", role: "manager" })
-        res.status(200).send(managerList)
-    } catch (err) {
-        res.status(400).send(err.message)
-    }
-}
+// // for displaying all accepted manager list to admin
+// const acceptedList = async (req, res) => {
+//     try {
+//         const managerList = await User.find({ verificationStatus: "true", role: "manager" })
+//         res.status(200).send(managerList)
+//     } catch (err) {
+//         res.status(400).send(err.message)
+//     }
+// }
+
+// // for displaying all rejected manager list to admin
+// const rejectedList = async (req, res) => {
+//     try {
+//         var pendingList = []
+//         const managerList = await User.find({ verificationStatus: "false", role: "manager" })
+//         res.status(200).send(managerList)
+//     } catch (err) {
+//         res.status(400).send(err.message)
+//     }
+// }
 
 // for admin to remove user by id (admin can remove reported user)
 const removeUserById = async (req, res) => {
@@ -112,9 +112,7 @@ const getAllEvents = async (req, res) => {
 module.exports = {
     managerList,
     setManagerStatus,
-    acceptedList,
-    rejectedList,
+    getAllEvents,
     removeUserById,
-    allUsers,
-    getAllEvents
+    allUsers
 }

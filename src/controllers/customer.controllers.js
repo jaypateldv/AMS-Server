@@ -1,12 +1,7 @@
-const express = require("express");
-// const router = new express.Router();
 const mongoose = require("mongoose");
 const TicketTransaction = require("../models/ticketTransaction.model");
-// const { authToken, isUser } = require("../middlewares/authRole");
 const AuditoriumBooking = require("../models/auditoriumBooking.model");
-// const time = require("../models/alllSlots.json");
 const { ObjectId } = require("mongodb");
-// const { convertDate, isValidEventUpdateDate } = require("../utils/utils");
 const email = require("../email/account")
 
 const { convertDate } = require("../utils/utils")
@@ -33,9 +28,9 @@ const allEvents = async (req, res) => {
       },
       {$sort:{createdAt:1}}
     ]);
-    res.send(allEvents);
+    res.status(200).send(allEvents);
   } catch (err) {
-    res.send({ error: err.message });
+    res.status(400).send({ error: err.message });
   }
 }
 
@@ -54,9 +49,9 @@ const ticketBooking = async (req, res) => {
       user_id: req.user._id,
     });
     const bookedDetails = await ticketTransaction.save();
-    res.status(200).send({ cTrans_id: bookedDetails._id, amount: bookedDetails.total_price, message: "Please make payment first to confirm your booking." });
+    res.status(201).send({ cTrans_id: bookedDetails._id, amount: bookedDetails.total_price, message: "Please make payment first to confirm your booking." });
   } catch (err) {
-    res.status(404).send({ error: err.message });
+    res.status(400).send({ error: err.message });
   }
 }
 
@@ -101,7 +96,7 @@ const ticketBookingPayment = async (req, res) => {
           const event = await AuditoriumBooking.findByIdAndUpdate(event_id, { $inc: { available_tickets: (seat_numbers.length * (-1)) } })
           await session.commitTransaction()
           //email.sendTicketConfirmationMail(req.user.name, event.event_name, amount, event.event_date,event.seat_numbers)
-          return res.json({ amount, status: req.params.status })
+          return res.status(201).json({ amount, status: req.params.status })
         }
       }
       else {
@@ -110,14 +105,12 @@ const ticketBookingPayment = async (req, res) => {
           { seat_numbers: 0, status: "Failed" })
         await session.commitTransaction()
           email.sendTicketFaliedMail(req.user.name, event.event_name,amount,event.event_date,event.seat_numbers)
-        return res.json({ amount, status: "Failed", message: "Booking has been cancel" })
+        return res.status(201).json({ amount, status: "Failed", message: "Booking has been cancel" })
       }
     } catch (err) {
-      // const bookingConfirmation = new AudiBookingPayment({ user_id: sender, event_id, amount, status: "Pending" })
-      // await bookingConfirmation.save()
       console.log("in abort :", err.message)
       await session.abortTransaction()
-      return res.json({ amount, status: "Pending", error: err.message })
+      return res.status(400).json({ amount, status: "Pending", error: err.message })
 
     } finally {
       session.endSession()
@@ -125,7 +118,7 @@ const ticketBookingPayment = async (req, res) => {
 
   } catch (err) {
     console.log("err", err.message)
-    return res.send({ error: err.message })
+    return res.status(400).send({ error: err.message })
   }
 }
 
@@ -150,7 +143,7 @@ const cancleTicket = async (req, res) => {
     }
     res.status(200).send(ticket)
   } catch (err) {
-    res.status().send({ error: err.message })
+    res.status(400).send({ error: err.message })
   }
 }
 
