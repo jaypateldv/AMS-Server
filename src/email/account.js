@@ -6,7 +6,11 @@ const sendWelcomeMail = (email, name) => {
         to: email,
         from: "pateljaykjp1@gmail.com",
         subject: "Thanks for joining us!",
-        text: `Welcome to the app ${name} , Let me know how you get along with the app.`
+        html: `
+                <h1>Welcome To Auditoria <b>${name}</b></h1>
+                <br><p>We would like to thank you for signing up to our service.We would love to hear what you think, if there is anything we can improve. If you have any questions, please reply to this Email. We are always happy to help!</p>
+                <br><br> <h5><b>Thank You!</b></h5>            
+             `
     })
 }
 
@@ -14,8 +18,14 @@ const sendCancelationMail = (email, name) => {
     sgmail.send({
         to: email,
         from: "pateljaykjp1@gmail.com",
-        subject: "Sorry to see you go!",
-        text: `Goodbye ${name}, I hope to see you back sometime soon.`
+        subject: "You deleted your Account!",
+        html: `
+                <h1>Dear ${name},</h1>
+                <br><p>Your Auditoria account has been deleted! Give your valuable feedback to us over a mail.</p>
+                <br><br> 
+                <p>  Have a nice day!</p>
+                <h5><b>Thank You!</b></h5> 
+            `
     })
 }
 
@@ -23,8 +33,13 @@ const sendVerificationPendingMail = (email, name) => {
     sgmail.send({
         to: email,
         from: "pateljaykjp1@gmail.com",
-        subject: "Regarding verification",
-        text: `Welcome ${name} to AMS System, we have received your request, once we verified it we'll let you know.\n Thank you for joining us.`
+        subject: "Regarding Verification",
+        html: `
+                <h1>Welcome ${name} to Auditoria </h1>
+                <br><p> We have received your request, Once we verified it we will let you know.</p>
+                <br><br>
+                <h5><b>Thank You for joining us!</b></h5> 
+            `
     })
 }
 
@@ -33,7 +48,12 @@ const sendVerificationAcceptedMail = (email, name) => {
         to: email,
         from: "pateljaykjp1@gmail.com",
         subject: "Regarding Accepted Request",
-        text: `Welcome again ${name}, we have accepted your request, now you are part of AMS system`
+        html: `
+                <h1>Welcome again ${name}</h1>
+                <br><p><b>Congratulations!</b> Your request has been Accepted. Now you are part of Auditoria.</p>
+                <br><br>
+                <h5><b>Thank You!</b></h5> 
+             `
     })
 }
 const sendVerificationRejectedMail = (email, name) => {
@@ -41,7 +61,12 @@ const sendVerificationRejectedMail = (email, name) => {
         to: email,
         from: "pateljaykjp1@gmail.com",
         subject: "Regarding Rejected Request",
-        text:`Hello ${name}, we have seen your request and sorry to say you that your request is not accepted.\nI hope to see you again , Thank you.`
+        html: `
+                <h1>Welcome ${name}</h1>
+                <br><p>We have seen your request but Sorry to say, your request has been Rejected. Now you are part of Auditoria. We hope to see you again</p>
+                <br><br>
+                <h5><b>Thank You!</b></h5> 
+            `
     })
 }
 const sendTicketConfirmationMail = (name,eventName,amout,eventDate,seatNumbers)=>{

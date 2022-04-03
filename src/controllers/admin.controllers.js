@@ -1,8 +1,7 @@
 const User = require('../models/user.model')
-const Auditorium = require('../models/auditorium.model')
 const email = require("../email/account")
 const AuditoriumBooking = require('../models/auditoriumBooking.model')
-const ticketTransaction = require('../models/ticketTransaction.model')
+const TicketTransaction = require('../models/ticketTransaction.model')
 
 // display manager list to admin so admin can accept or reject
 const managerList = async (req, res) => {
@@ -40,28 +39,6 @@ const setManagerStatus = async (req, res) => {
         }
         else res.status(404).send("Manager not found..")
     } catch (err) {
-        res.status(404).send(err.message)
-    }
-}
-
-// for displaying all accepted manager list to admin
-const acceptedList = async (req, res) => {
-    try {
-        var pendingList = []
-        const managerList = await User.find({ verificationStatus: "true", role: "manager" })
-        res.status(200).send(managerList)
-    } catch (err) {
-        res.status(400).send(err.message)
-    }
-}
-
-// for displaying all rejected manager list to admin
-const rejectedList = async (req, res) => {
-    try {
-        var pendingList = []
-        const managerList = await User.find({ verificationStatus: "false", role: "manager" })
-        res.status(200).send(managerList)
-    } catch (err) {
         res.status(400).send(err.message)
     }
 }
@@ -71,8 +48,9 @@ const removeUserById = async (req, res) => {
     try {
         console.log(("id",req.params.userId));
         const user = await User.findByIdAndRemove(req.params.userId)
-        await ticketTransaction.deleteOne({ user_id: req.params.userId })
-        res.status(200).send({ message: `User has been deleted successfully...` })
+        await TicketTransaction.deleteMany({ user_id: req.params.userId })
+        email.sendCancelationMail(user.email, user.name)
+        res.status(200).send({ message: `User - ${user.name} hase been deleted successfully...` })
     } catch (err) {
         res.status(400).send({ error: err.message })
     }
@@ -105,7 +83,7 @@ const getAllEvents = async (req, res) => {
             }},
             {$project:{"bookedBy.email":0,"bookedBy.password":0,"bookedBy.verificationStatus":0,"bookedBy.role":0,"bookedBy.contact":0,"bookedBy.updatedAt":0,"bookedBy.createdAt":0}}
         ])
-        res.send(eventDetails)
+        res.status(200).send(eventDetails)
     }
     catch (err) {
         res.status(400).send(err.message)
@@ -116,9 +94,7 @@ const getAllEvents = async (req, res) => {
 module.exports = {
     managerList,
     setManagerStatus,
-    acceptedList,
-    rejectedList,
+    getAllEvents,
     removeUserById,
-    allUsers,
-    getAllEvents
+    allUsers
 }
