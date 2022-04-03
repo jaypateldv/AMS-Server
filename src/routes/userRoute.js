@@ -20,7 +20,7 @@ router.get('/profile', authToken, userControllers.profile)
 router.patch('/profileupdate', authToken, userControllers.profileUpdate)
 
 // Delete User
-router.patch('/deleteaccount', authToken, userControllers.deleteAccount)
+router.delete('/deleteaccount', authToken, userControllers.deleteAccount)
 
 module.exports = router
 
