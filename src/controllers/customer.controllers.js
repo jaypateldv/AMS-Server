@@ -96,9 +96,9 @@ const ticketBookingPayment = async (req, res) => {
               });
           }
           await TicketTransaction.findByIdAndUpdate(cTrans_id, { status: "true" })
-          const event =  await AuditoriumBooking.findByIdAndUpdate(event_id, { $inc: { available_tickets: (seat_numbers.length * (-1)) } })
+          const event = await AuditoriumBooking.findByIdAndUpdate(event_id, { $inc: { available_tickets: (seat_numbers.length * (-1)) } })
           await session.commitTransaction()
-          email.sendTicketConfirmationMail(req.user.name,event.event_name,amount,event.event_date,)
+          //email.sendTicketConfirmationMail(req.user.name, event.event_name, amount, event.event_date,event.seat_numbers)
           return res.json({ amount, status: req.params.status })
         }
       }
@@ -107,6 +107,7 @@ const ticketBookingPayment = async (req, res) => {
         await TicketTransaction.findOneAndUpdate({ _id: req.body.cTrans_id },
           { seat_numbers: 0, status: "Failed" })
         await session.commitTransaction()
+          email.sendTicketFaliedMail(req.user.name, event.event_name,amount,event.event_date,event.seat_numbers)
         return res.json({ amount, status: "Failed", message: "Booking has been cancel" })
       }
     } catch (err) {
@@ -135,9 +136,10 @@ const cancleTicket = async (req, res) => {
     session.startTransaction()
     try {
       const ticket = await TicketTransaction.findByIdAndUpdate({ _id: req.params.ticketId }, { $set: { status: "cancel" } })
-      await AuditoriumBooking.findByIdAndUpdate({ _id: ticket.event_id }, { $inc: { "available_tickets": ticket.tickets.length } })
+      const event = await AuditoriumBooking.findByIdAndUpdate({ _id: ticket.event_id }, { $inc: { "available_tickets": ticket.tickets.length } })
       console.log("tikcet", ticket)
       await session.commitTransaction()
+      email.sendCancleTicketMail(req.user.name,event.event_name,event.event_date,ticket.total_price)
       res.status(200).send({ message: "Ticket deleted" })
     } catch (err) {
       await session.abortTransaction()

@@ -5,6 +5,8 @@ const AudiBookingPayment = require('../models/auditoriumPayment.model')
 const { isValidBookingDate, getMergeTimeSlots, AvailableTime} = require('../utils/utils')
 const time = require('../models/allSlots.json')
 const { isValidEventUpdateDate } = require('../utils/utils')
+const email = require("../email/account")
+
 
 const findAuditorium = async (req,res) => {
     try {
@@ -173,6 +175,7 @@ const auditoriumBookingPayment = async (req,res) => {
                 const bookingConfirmation = new AudiBookingPayment({ user_id: sender, event_id, amount, status: "False" })
                 await bookingConfirmation.save()
                 await session.commitTransaction()
+                email.sendAuditoriumBookingConfirmationMail(req.user.name,booking,total_cost)
                 return res.json({ amount, status: bookingConfirmation.status, message: "Booking has been cancel" })
             }
         } catch (err) {
@@ -181,6 +184,7 @@ const auditoriumBookingPayment = async (req,res) => {
             await bookingConfirmation.save()
             console.log("in abort :", err.message)
             await session.abortTransaction()
+            email.sendAuditoriumBookingFaliedMail(req.user.name,booking,total_cost)
             return res.json({ amount, status: bookingConfirmation.status, error: err.message })
 
         } finally {
