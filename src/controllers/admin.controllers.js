@@ -89,8 +89,6 @@ const allUsers = async (req, res) => {
 // for displaying All Events
 const getAllEvents = async (req, res) => {
     try {
-        // console.log("manager : ", req.user._id, req.user.name)
-        //const auditorium = await Auditorium.find();
         const eventDetails = await AuditoriumBooking.aggregate([
             {$match:{}},
             {$lookup:{
