@@ -2,13 +2,14 @@ const Auditorium = require('../models/auditorium.model')
 const AuditoriumBooking = require('../models/auditoriumBooking.model')
 const sharp = require('sharp')
 
-
+// display  auditorium details to manager
 const auditoriumDetails = async (req, res) => {
     console.log("manager : ", req.user._id, req.user.name)
     const auditoriumDetails = await Auditorium.find({ manager_id: req.user._id })
     res.send(auditoriumDetails)
 }
 
+// for image uploading of auditorium
 const uploadAuditoriumimage = async (req, res) => {
     console.log('upload')
     try {
@@ -31,6 +32,7 @@ const uploadAuditoriumimage = async (req, res) => {
     }
 }
 
+// display all booked auditorium details to customer
 const getBookedAuditoriumdetails = async (req, res) => {
     try {
         console.log("manager : ", req.user._id, req.user.name)
@@ -43,6 +45,7 @@ const getBookedAuditoriumdetails = async (req, res) => {
     }
 }
 
+// update auditorium details
 const updateAuditoriumdetails = async (req, res) => {
     const updates = Object.keys(req.body)
     const allowedUpdates = ["auditoriumName", "address", "city", "capacity", "costPerHour"]
@@ -61,6 +64,7 @@ const updateAuditoriumdetails = async (req, res) => {
 
 }
 
+// for delete event
 const deleteEvent = async (req, res) => {
     try {
         const event = await AuditoriumBooking.findById(req.body.event_id)
