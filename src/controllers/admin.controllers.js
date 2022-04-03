@@ -2,6 +2,7 @@ const User = require('../models/user.model')
 const Auditorium = require('../models/auditorium.model')
 const email = require("../email/account")
 const AuditoriumBooking = require('../models/auditoriumBooking.model')
+const ticketTransaction = require('../models/ticketTransaction.model')
 
 
 const managerList = async (req, res) => {
@@ -63,9 +64,10 @@ const rejectedList = async (req, res) => {
 
 const removeUserById = async (req, res) => {
     try {
+        console.log(("id",req.params.userId));
         const user = await User.findByIdAndRemove(req.params.userId)
-        await TicketTransaction.deleteMany({ user_id: req.params.userId })
-        res.status(200).send({ message: `User - ${user.name} hase been deleted successfully...` })
+        await ticketTransaction.deleteOne({ user_id: req.params.userId })
+        res.status(200).send({ message: `User has been deleted successfully...` })
     } catch (err) {
         res.status(400).send({ error: err.message })
     }

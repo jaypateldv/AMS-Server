@@ -23,7 +23,7 @@ router.get("/acceptedList", [authToken, isAdmin], adminCtrl.acceptedList)
 router.get("/rejectedList", [authToken, isAdmin], adminCtrl.rejectedList)
 
 // Remove User By Id
-router.get("/removeUser:userId", [authToken, isAdmin], adminCtrl.removeUserById)
+router.get("/removeUser/:userId", [authToken, isAdmin], adminCtrl.removeUserById)
 
 // return all users
 router.get("/allUsers", [authToken, isAdmin], adminCtrl.allUsers)
