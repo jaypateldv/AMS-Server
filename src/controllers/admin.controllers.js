@@ -2,7 +2,7 @@ const User = require('../models/user.model')
 const Auditorium = require('../models/auditorium.model')
 const email = require("../email/account")
 
-
+// display manager list to admin so admin can accept or reject
 const managerList = async (req, res) => {
     try {
         let query = req.query.status ? { verificationStatus: req.query.status, role: "manager" } : {}
@@ -24,6 +24,7 @@ const managerList = async (req, res) => {
     }
 }
 
+// for update status of manager after accepting manager's request
 const setManagerStatus = async (req, res) => {
     try {
         const Updatedmanager = await User.findByIdAndUpdate(req.body.managerId, { verificationStatus: req.body.verificationStatus }, { new: true, runValidators: true })
@@ -41,6 +42,7 @@ const setManagerStatus = async (req, res) => {
     }
 }
 
+// for displaying all accepted manager list to admin
 const acceptedList = async (req, res) => {
     try {
         var pendingList = []
@@ -50,6 +52,8 @@ const acceptedList = async (req, res) => {
         res.status(400).send(err.message)
     }
 }
+
+// for displaying all rejected manager list to admin
 const rejectedList = async (req, res) => {
     try {
         var pendingList = []
@@ -60,6 +64,7 @@ const rejectedList = async (req, res) => {
     }
 }
 
+// for admin to remove user by id (admin can remove reported user)
 const removeUserById = async (req, res) => {
     try {
         const user = await User.findByIdAndRemove(req.params.userId)
@@ -70,6 +75,7 @@ const removeUserById = async (req, res) => {
     }
 }
 
+// for displaying all user list to admin
 const allUsers = async (req, res) => {
     try {
         const users = await User.find(req.query)
@@ -79,6 +85,7 @@ const allUsers = async (req, res) => {
     }
 }
 
+// exporting all admin function
 module.exports = {
     managerList,
     setManagerStatus,
