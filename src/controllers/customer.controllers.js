@@ -4,7 +4,7 @@ const AuditoriumBooking = require("../models/auditoriumBooking.model");
 const { ObjectId } = require("mongodb");
 const email = require("../email/account")
 
-const { convertDate } = require("../utils/utils")
+const { convertDate, isValidEventUpdateDate } = require("../utils/utils")
 
 // display all event details to customer
 const allEvents = async (req, res) => {
@@ -61,6 +61,7 @@ const ticketBookingPayment = async (req, res) => {
     const amount = req.body.amount
     const sender = req.user._id
     const { status, seat_numbers } = await TicketTransaction.findById(req.body.cTrans_id)
+    console.log("statyus",status);
     if (status == "Confirmed")
       throw new Error("Payment already Completed")
     const session = await mongoose.startSession()
@@ -87,10 +88,10 @@ const ticketBookingPayment = async (req, res) => {
                 }
               });
           }
-          await TicketTransaction.findByIdAndUpdate(cTrans_id, { status: "true" })
-          await AuditoriumBooking.findByIdAndUpdate(event_id, { $inc: { available_tickets: (seat_numbers.length * (-1)) } })
-          await session.commitTransaction()
+          await TicketTransaction.findByIdAndUpdate(cTrans_id, { status: "Confirmed" })
+          const event = await AuditoriumBooking.findByIdAndUpdate(event_id, { $inc: { available_tickets: (seat_numbers.length * (-1)) } })
           email.sendTicketConfirmationMail(req.user.name, event.event_name, amount, event.event_date,event.seat_numbers)
+          await session.commitTransaction()
           return res.status(201).json({ amount, status: req.params.status })
         }
       }
@@ -123,18 +124,21 @@ const cancleTicket = async (req, res) => {
     session.startTransaction()
     try {
       const ticket = await TicketTransaction.findByIdAndUpdate({ _id: req.params.ticketId }, { $set: { status: "cancel" } })
+      if(ticket.tickets[0])
+        return res.status(400).send({error:"Error while canceling tickets"})
+      console.log("ticket,",ticket);
       const event = await AuditoriumBooking.findByIdAndUpdate({ _id: ticket.event_id }, { $inc: { "available_tickets": ticket.tickets.length } })
+      //email.sendCancleTicketMail(req.user.name,event.event_name,event.event_date,ticket.total_price)
       await session.commitTransaction()
-      email.sendCancleTicketMail(req.user.name,event.event_name,event.event_date,ticket.total_price)
-      res.status(200).send({ message: "Ticket deleted" })
+      return res.status(200).send({ message: "Ticket deleted" })
     } 
     catch (err) {
       await session.abortTransaction()
-      res.status(500).send({ error: err.message })
+      return  res.status(500).send({ error: err.message })
     }
-    res.status(200).send(ticket)
+    return  res.status(200).send(ticket)
   } catch (err) {
-    res.status(400).send({ error: err.message })
+    return res.status(400).send({ error: err.message })
   }
 }
 
