@@ -60,7 +60,7 @@ const profileUpdate = async (req, res) => {
     const allowedUpdates = ["name", "email", "password", "age", "contact"]
     const isValidUpdate = updates.every((update) => allowedUpdates.includes(update))
     if (!isValidUpdate)
-        return res.status(400).send("Invalid Updates..")
+        return res.status(400).send({error:"Invalid Updates.."})
     try {
         updates.forEach((update) => req.user[update] = req.body[update])
         await req.user.save()
