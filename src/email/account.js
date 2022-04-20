@@ -2,6 +2,7 @@ const sgmail = require("@sendgrid/mail")
 sgmail.setApiKey(process.env.sendGridApiKey)
 
 const sendWelcomeMail = (email, name) => {
+    console.log("Send welcome mail");
     sgmail.send({
         to: email,
         from: "pateljaykjp1@gmail.com",
