@@ -15,9 +15,9 @@ app.use(function (req, res, next) {
  
 app.use(cors())
 app.use(express.json())
-app.use("/",(req,res)=>{
-    res.status(200).send({message:"Welcome to Auditorium Management System"})
-})
+// app.use("/",(req,res)=>{
+//     res.status(200).send({message:"Welcome to Auditorium Management System1"})
+// })
 app.use("/user", userRoute)
 app.use("/admin", adminRoute)
 app.use("/manager", managerRoute)
