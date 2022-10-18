@@ -7,7 +7,8 @@ const login = async (req, res, next) => {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const authToken = await user.generateAuthToken()
-        req.header.authorization = "Bearer " + authToken
+        // req.header.authorization = "Bearer " + authToken
+        console.log("user",user);
         res.status(200).send({ user, authToken })
     } catch (error) {
         res.status(400).send({ error: error.message })

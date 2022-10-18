@@ -67,6 +67,7 @@ userSchema.methods.toJSON = function () {
 // create findByCredentials method in User schema
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({ email ,verificationStatus:"true"})
+    console.log("aaa",user);
     if (!user)
         throw new Error("Invalid email or password")
 
