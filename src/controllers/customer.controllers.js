@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const TicketTransaction = require("../models/ticketTransaction.model");
 const AuditoriumBooking = require("../models/auditoriumBooking.model");
 const { ObjectId } = require("mongodb");
-const email = require("../email/account")
+// const email = require("../email/account")
 
 const { convertDate, isValidEventUpdateDate } = require("../utils/utils")
 
@@ -25,7 +25,7 @@ const allEvents = async (req, res) => {
           updatedAt: 0,
         },
       },
-      {$sort:{createdAt:1}}
+      { $sort: { createdAt: 1 } }
     ]);
     res.status(200).send(allEvents);
   } catch (err) {
@@ -61,7 +61,7 @@ const ticketBookingPayment = async (req, res) => {
     const amount = req.body.amount
     const sender = req.user._id
     const { status, seat_numbers } = await TicketTransaction.findById(req.body.cTrans_id)
-    console.log("statyus",status);
+    console.log("statyus", status);
     if (status == "Confirmed")
       throw new Error("Payment already Completed")
     const session = await mongoose.startSession()
@@ -90,7 +90,7 @@ const ticketBookingPayment = async (req, res) => {
           }
           await TicketTransaction.findByIdAndUpdate(cTrans_id, { status: "Confirmed" })
           const event = await AuditoriumBooking.findByIdAndUpdate(event_id, { $inc: { available_tickets: (seat_numbers.length * (-1)) } })
-          email.sendTicketConfirmationMail(req.user.name, event.event_name, amount, event.event_date,event.seat_numbers)
+          // email.sendTicketConfirmationMail(req.user.name, event.event_name, amount, event.event_date, event.seat_numbers)
           await session.commitTransaction()
           return res.status(201).json({ amount, status: req.params.status })
         }
@@ -99,7 +99,7 @@ const ticketBookingPayment = async (req, res) => {
         await TicketTransaction.findOneAndUpdate({ _id: req.body.cTrans_id },
           { seat_numbers: 0, status: "Failed" })
         await session.commitTransaction()
-          email.sendTicketFaliedMail(req.user.name, event.event_name,amount,event.event_date,event.seat_numbers)
+        // email.sendTicketFaliedMail(req.user.name, event.event_name, amount, event.event_date, event.seat_numbers)
         return res.status(201).json({ amount, status: "Failed", message: "Booking has been cancel" })
       }
     } catch (err) {
@@ -124,19 +124,19 @@ const cancleTicket = async (req, res) => {
     session.startTransaction()
     try {
       const ticket = await TicketTransaction.findByIdAndUpdate({ _id: req.params.ticketId }, { $set: { status: "cancel" } })
-      if(ticket.tickets[0])
-        return res.status(400).send({error:"Error while canceling tickets"})
-      console.log("ticket,",ticket);
+      if (ticket.tickets[0])
+        return res.status(400).send({ error: "Error while canceling tickets" })
+      console.log("ticket,", ticket);
       const event = await AuditoriumBooking.findByIdAndUpdate({ _id: ticket.event_id }, { $inc: { "available_tickets": ticket.tickets.length } })
       //email.sendCancleTicketMail(req.user.name,event.event_name,event.event_date,ticket.total_price)
       await session.commitTransaction()
       return res.status(200).send({ message: "Ticket deleted" })
-    } 
+    }
     catch (err) {
       await session.abortTransaction()
-      return  res.status(500).send({ error: err.message })
+      return res.status(500).send({ error: err.message })
     }
-    return  res.status(200).send(ticket)
+    return res.status(200).send(ticket)
   } catch (err) {
     return res.status(400).send({ error: err.message })
   }
@@ -161,7 +161,7 @@ const myEvents = async (req, res) => {
         }
       },
       { $project: { updatedAt: 0, createdAt: 0, "event.timeSlots": 0, "event.total_cost": 0, "event.organizer_id": 0, "event.auditorium_id": 0, "event.available_tickets": 0, "event.total_tickets": 0 } },
-      { $match: { "event.event_date": match } }
+      // { $match: { "event.event_date": match } }
     ])
     res.status(200).send(pastEvents)
   } catch (err) {

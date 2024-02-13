@@ -34,7 +34,7 @@ const ticketTranactionSchema = new mongoose.Schema({
         type: String,
         trim: true,
         default: "Pending",
-      },
+    },
     tickets: [{
 
         seat_no: {

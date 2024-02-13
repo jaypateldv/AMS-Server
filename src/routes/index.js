@@ -14,7 +14,6 @@ app.use(function (req, res, next) {
 });
  
 app.use(cors())
-
 app.use(express.json())
 app.use("/user", userRoute)
 app.use("/admin", adminRoute)
